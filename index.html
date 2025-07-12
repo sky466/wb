@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>高级文本排版工具</title>
+    <title>文本处理工具</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * {
@@ -32,53 +32,26 @@
             color: #333;
             min-height: 100vh;
             padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
         
         .container {
             max-width: 1200px;
+            width: 100%;
             margin: 0 auto;
         }
         
-        header {
-            text-align: center;
-            padding: 20px 0;
-            margin-bottom: 20px;
-        }
-        
-        .logo {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 15px;
-            color: white;
-            margin-bottom: 15px;
-        }
-        
-        .logo i {
-            font-size: 2.5rem;
-            background: rgba(255, 255, 255, 0.2);
-            width: 70px;
-            height: 70px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 50%;
-            backdrop-filter: blur(5px);
-        }
-        
-        .logo h1 {
-            font-size: 2.2rem;
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-        }
-        
         .app-card {
-            background: white;
+            background: rgba(255, 255, 255, 0.95);
             border-radius: 15px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
             overflow: hidden;
             display: flex;
             flex-direction: column;
-            height: calc(100vh - 100px);
+            height: 90vh;
+            max-height: 900px;
         }
         
         .editor-container {
@@ -103,6 +76,7 @@
             display: flex;
             align-items: center;
             gap: 10px;
+            border-radius: 8px 8px 0 0;
         }
         
         .text-area {
@@ -116,6 +90,7 @@
             line-height: 1.6;
             box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
             margin-top: 10px;
+            background: #f8f9fa;
         }
         
         .text-area:focus {
@@ -173,6 +148,7 @@
             align-items: center;
             gap: 8px;
             transition: all 0.3s ease;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
         
         .btn-primary {
@@ -182,6 +158,7 @@
         
         .btn-primary:hover {
             background: var(--primary-dark);
+            transform: translateY(-2px);
         }
         
         .btn-secondary {
@@ -191,6 +168,7 @@
         
         .btn-secondary:hover {
             background: var(--secondary-dark);
+            transform: translateY(-2px);
         }
         
         .btn-warning {
@@ -200,6 +178,7 @@
         
         .btn-warning:hover {
             background: #e67e22;
+            transform: translateY(-2px);
         }
         
         .btn-danger {
@@ -209,6 +188,7 @@
         
         .btn-danger:hover {
             background: #c0392b;
+            transform: translateY(-2px);
         }
         
         .btn-outline {
@@ -219,6 +199,7 @@
         
         .btn-outline:hover {
             background: #f0f0f0;
+            transform: translateY(-2px);
         }
         
         .search-panel {
@@ -297,59 +278,6 @@
             transition: width 0.3s ease;
         }
         
-        /* 响应式设计 */
-        @media (max-width: 768px) {
-            .app-card {
-                height: auto;
-                min-height: 100vh;
-            }
-            
-            .options-row {
-                gap: 10px;
-            }
-            
-            .btn {
-                padding: 8px 12px;
-                font-size: 0.9rem;
-            }
-            
-            .logo h1 {
-                font-size: 1.8rem;
-            }
-            
-            .status-bar {
-                flex-direction: column;
-                gap: 5px;
-            }
-        }
-        
-        @media (max-width: 480px) {
-            .search-row {
-                flex-direction: column;
-                align-items: stretch;
-            }
-            
-            .search-field {
-                min-width: 100%;
-            }
-            
-            .btn {
-                flex: 1;
-                justify-content: center;
-            }
-        }
-        
-        /* 自定义复选框和单选按钮 */
-        input[type="checkbox"], input[type="radio"] {
-            width: 18px;
-            height: 18px;
-            accent-color: var(--primary);
-        }
-        
-        select, .search-input {
-            background: white;
-        }
-        
         .modal {
             display: none;
             position: fixed;
@@ -407,20 +335,76 @@
         .duplicate {
             background-color: var(--duplicate);
         }
+        
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .app-card {
+                height: auto;
+                min-height: 100vh;
+            }
+            
+            .options-row {
+                gap: 10px;
+            }
+            
+            .btn {
+                padding: 8px 12px;
+                font-size: 0.9rem;
+            }
+            
+            .status-bar {
+                flex-direction: column;
+                gap: 5px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .search-row {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .search-field {
+                min-width: 100%;
+            }
+            
+            .btn {
+                flex: 1;
+                justify-content: center;
+            }
+        }
+        
+        /* 自定义复选框和单选按钮 */
+        input[type="checkbox"], input[type="radio"] {
+            width: 18px;
+            height: 18px;
+            accent-color: var(--primary);
+        }
+        
+        select, .search-input {
+            background: white;
+        }
+        
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--dark);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            z-index: 2000;
+            display: none;
+        }
+        
+        .file-upload {
+            display: none;
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <header>
-            <div class="logo">
-                <i class="fas fa-text-height"></i>
-                <h1>高级文本排版工具</h1>
-            </div>
-            <p style="color: rgba(255, 255, 255, 0.9); max-width: 600px; margin: 0 auto;">
-                功能强大的文本处理工具，支持格式转换、查找替换、重复检测等操作
-            </p>
-        </header>
-        
         <main class="app-card">
             <div class="section-title">
                 <i class="fas fa-edit"></i>
@@ -429,7 +413,25 @@
             
             <div class="editor-container">
                 <div class="text-section">
-                    <textarea class="text-area" id="textArea" placeholder="在此输入文本内容，或使用下方功能处理文本..."></textarea>
+                    <textarea class="text-area" id="textArea" placeholder="在此输入文本内容，或使用下方功能处理文本...">欢迎使用文本处理工具！
+
+这是一个功能强大的文本处理程序，支持多种文本操作：
+1. 删除多余的空格和空行
+2. 大小写转换
+3. 文本对齐和缩进
+4. 查找替换功能
+5. 检测重复内容
+
+使用说明：
+- 在文本区域输入或粘贴您的文本
+- 在控制面板选择需要的处理选项
+- 点击"处理文本"按钮执行操作
+- 使用"查找替换"功能快速修改文本
+- "查找重复"功能可检测重复的单词和成语
+
+提示：处理后的文本会自动复制到剪贴板，方便您粘贴到其他应用程序中。
+
+祝您使用愉快！</textarea>
                 </div>
                 
                 <div class="controls">
@@ -476,24 +478,6 @@
                             <span>文本转换</span>
                         </div>
                         <div class="options-row">
-                            <div class="option-item">
-                                <span>中文转换：</span>
-                                <div class="options-row">
-                                    <div class="option-item">
-                                        <input type="radio" id="convertNone" name="convert" checked>
-                                        <label for="convertNone">不转换</label>
-                                    </div>
-                                    <div class="option-item">
-                                        <input type="radio" id="convertSimplified" name="convert">
-                                        <label for="convertSimplified">转简体</label>
-                                    </div>
-                                    <div class="option-item">
-                                        <input type="radio" id="convertTraditional" name="convert">
-                                        <label for="convertTraditional">转繁体</label>
-                                    </div>
-                                </div>
-                            </div>
-                            
                             <div class="option-item">
                                 <span>大小写：</span>
                                 <div class="options-row">
@@ -661,7 +645,9 @@
         </div>
     </div>
     
-    <input type="file" id="fileInput" style="display: none;" accept=".txt">
+    <div class="toast" id="toast">操作成功！</div>
+    
+    <input type="file" id="fileInput" class="file-upload" accept=".txt">
     
     <script>
         // 页面加载完成后初始化
@@ -686,6 +672,7 @@
             const resultModal = document.getElementById('resultModal');
             const closeModalBtn = document.getElementById('closeModalBtn');
             const okBtn = document.getElementById('okBtn');
+            const toast = document.getElementById('toast');
             
             // 预设正则表达式模式
             const presetPatterns = {
@@ -742,12 +729,21 @@
                     }
                 });
                 
-                // 取消加载
-                cancelBtn.addEventListener('click', cancelLoading);
-                
-                // 关闭结果模态框
+                // 关闭模态框
                 closeModalBtn.addEventListener('click', () => resultModal.style.display = 'none');
                 okBtn.addEventListener('click', () => resultModal.style.display = 'none');
+                
+                // 更新初始统计
+                updateStatistics();
+            }
+            
+            // 显示提示消息
+            function showToast(message) {
+                toast.textContent = message;
+                toast.style.display = 'block';
+                setTimeout(() => {
+                    toast.style.display = 'none';
+                }, 3000);
             }
             
             // 更新文本统计信息
@@ -758,13 +754,13 @@
                 const totalChars = text.replace(/\n|\r/g, '').length;
                 
                 // 中文字数
-                const chineseChars = (text.match(/[\u4e00-\u9fff\u3400-\u4dbf\U00020000-\U0002a6df\U0002a700-\U0002b73f\U0002b740-\U0002b81f\U0002b820-\U0002ceaf]/gu) || []).length;
+                const chineseChars = (text.match(/[\u4e00-\u9fff]/g) || []).length;
                 
                 // 阿拉伯数字
                 const arabicNumbers = (text.match(/\d/g) || []).length;
                 
                 // 标点符号
-                const punctuation = (text.match(/[^\w\s\u4e00-\u9fff]/gu) || []).length;
+                const punctuation = (text.match(/[^\w\s\u4e00-\u9fff]/g) || []).length;
                 
                 // 字母数
                 const letters = (text.match(/[a-zA-Z]/g) || []).length;
@@ -802,7 +798,7 @@
                     textArea.value = e.target.result;
                     progressContainer.style.display = 'none';
                     updateStatistics();
-                    alert(`文件加载成功!\n文件名: ${file.name}\n大小: ${formatFileSize(file.size)}`);
+                    showToast(`文件加载成功: ${file.name}`);
                 };
                 
                 reader.onprogress = function(e) {
@@ -817,20 +813,13 @@
                 reader.readAsText(file);
             }
             
-            // 格式化文件大小
-            function formatFileSize(bytes) {
-                if (bytes < 1024) return bytes + ' B';
-                else if (bytes < 1048576) return (bytes / 1024).toFixed(1) + ' KB';
-                else if (bytes < 1073741824) return (bytes / 1048576).toFixed(1) + ' MB';
-                else return (bytes / 1073741824).toFixed(1) + ' GB';
-            }
-            
             // 清空输入
             function clearInput() {
                 textArea.value = '';
                 currentFile = "无";
                 updateStatistics();
                 hideSearchPanel();
+                showToast("文本区域已清空");
             }
             
             // 显示/隐藏查找面板
@@ -848,28 +837,13 @@
                 document.getElementById('searchStatus').textContent = '';
             }
             
-            // 取消加载
-            function cancelLoading() {
-                progressContainer.style.display = 'none';
-                document.getElementById('statusBar').textContent = "文件加载已取消";
-            }
-            
             // 处理文本
             function processText() {
                 let text = textArea.value;
                 
                 if (!text.trim()) {
-                    alert("请输入文本内容！");
+                    showToast("请输入文本内容！");
                     return;
-                }
-                
-                // 中文转换
-                const convertOption = document.querySelector('input[name="convert"]:checked').id;
-                if (convertOption === "convertSimplified") {
-                    // 这里应该是简繁转换逻辑，简化实现
-                    text = text.replace(/臺|臺/g, "台");
-                } else if (convertOption === "convertTraditional") {
-                    text = text.replace(/台/g, "臺");
                 }
                 
                 // 大小写转换
@@ -970,19 +944,18 @@
                 // 更新统计信息
                 updateStatistics();
                 
-                // 提示处理完成
-                alert("文本处理完成！结果已复制到剪贴板。");
-                
                 // 复制到剪贴板
                 textArea.select();
                 document.execCommand('copy');
+                
+                showToast("文本处理完成！结果已复制到剪贴板");
             }
             
             // 查找文本
             function findText() {
                 const findInput = document.getElementById('findInput').value;
                 if (!findInput) {
-                    alert("请输入查找内容！");
+                    showToast("请输入查找内容！");
                     return;
                 }
                 
@@ -1018,21 +991,22 @@
                             foundIndex = match.index;
                             selectText(foundIndex, foundIndex + match[0].length);
                             status.textContent = '';
+                            showToast("找到匹配内容");
                         } else {
                             status.textContent = direction === 'down' 
                                 ? "已到达文档末尾，从头开始搜索" 
                                 : "已到达文档开头，从末尾开始搜索";
-                                // 重置搜索位置
-                                setTimeout(() => {
-                                    if (direction === 'down') {
-                                        textArea.selectionStart = 0;
-                                        textArea.selectionEnd = 0;
-                                    } else {
-                                        textArea.selectionStart = text.length;
-                                        textArea.selectionEnd = text.length;
-                                    }
-                                    findText();
-                                }, 1000);
+                            // 重置搜索位置
+                            setTimeout(() => {
+                                if (direction === 'down') {
+                                    textArea.selectionStart = 0;
+                                    textArea.selectionEnd = 0;
+                                } else {
+                                    textArea.selectionStart = text.length;
+                                    textArea.selectionEnd = text.length;
+                                }
+                                findText();
+                            }, 1000);
                         }
                     } catch (e) {
                         status.textContent = `正则表达式错误: ${e.message}`;
@@ -1057,6 +1031,7 @@
                     if (foundIndex !== -1) {
                         selectText(foundIndex, foundIndex + findInput.length);
                         status.textContent = '';
+                        showToast("找到匹配内容");
                     } else {
                         status.textContent = "未找到匹配内容";
                     }
@@ -1068,7 +1043,11 @@
                 textArea.focus();
                 textArea.selectionStart = start;
                 textArea.selectionEnd = end;
-                textArea.scrollTop = textArea.scrollHeight * (start / textArea.value.length);
+                
+                // 滚动到可见区域
+                const lineHeight = parseInt(getComputedStyle(textArea).lineHeight);
+                const lines = textArea.value.substr(0, start).split('\n').length;
+                textArea.scrollTop = (lines - 5) * lineHeight;
             }
             
             // 替换文本
@@ -1077,7 +1056,7 @@
                 const replaceInput = document.getElementById('replaceInput').value;
                 
                 if (!findInput) {
-                    alert("请输入查找内容！");
+                    showToast("请输入查找内容！");
                     return;
                 }
                 
@@ -1102,6 +1081,7 @@
                     
                     // 查找下一个
                     findText();
+                    showToast("已替换当前匹配内容");
                 } else {
                     // 查找下一个
                     findText();
@@ -1114,7 +1094,7 @@
                 const replaceInput = document.getElementById('replaceInput').value;
                 
                 if (!findInput) {
-                    alert("请输入查找内容！");
+                    showToast("请输入查找内容！");
                     return;
                 }
                 
@@ -1134,13 +1114,14 @@
                         return;
                     }
                 } else {
-                    count = (text.match(new RegExp(escapeRegExp(findInput), 'g')) || []).length;
+                    count = (text.match(new RegExp(escapeRegExp(findInput), 'g') || []).length;
                     text = text.replace(new RegExp(escapeRegExp(findInput), 'g'), replaceInput);
                 }
                 
                 textArea.value = text;
                 updateStatistics();
                 document.getElementById('searchStatus').textContent = `已替换 ${count} 处匹配内容！`;
+                showToast(`已替换 ${count} 处匹配内容`);
             }
             
             // 转义正则特殊字符
@@ -1152,31 +1133,9 @@
             function findDuplicates() {
                 const text = textArea.value;
                 if (!text.trim()) {
-                    alert("请输入文本内容！");
+                    showToast("请输入文本内容！");
                     return;
                 }
-                
-                // 显示进度条
-                progressContainer.style.display = 'block';
-                progressLabel.textContent = "正在查找重复内容...";
-                progressFill.style.width = '0%';
-                
-                // 模拟处理过程
-                let progress = 0;
-                const interval = setInterval(() => {
-                    progress += 5;
-                    progressFill.style.width = `${progress}%`;
-                    if (progress >= 100) {
-                        clearInterval(interval);
-                        progressContainer.style.display = 'none';
-                        showDuplicateResults();
-                    }
-                }, 100);
-            }
-            
-            // 显示重复项结果
-            function showDuplicateResults() {
-                const text = textArea.value;
                 
                 // 检测重复的英文单词
                 const englishWords = text.match(/\b[a-zA-Z]+\b/g) || [];
@@ -1238,35 +1197,12 @@
                 // 更新重复项计数
                 const duplicateCount = duplicateWords.length + duplicateIdioms.length;
                 document.getElementById('duplicates').textContent = `重复项: ${duplicateCount}`;
+                
+                showToast("重复项检测完成");
             }
             
             // 初始化应用
             initEventListeners();
-            updateStatistics();
-            
-            // 添加示例文本
-            textArea.value = `欢迎使用高级文本排版工具！
-
-这是一个功能强大的文本处理程序，支持多种文本操作：
-1. 删除多余的空格和空行
-2. 中文简繁体转换
-3. 大小写转换
-4. 文本对齐和缩进
-5. 查找替换功能
-6. 检测重复内容
-
-使用说明：
-- 在文本区域输入或粘贴您的文本
-- 在控制面板选择需要的处理选项
-- 点击"处理文本"按钮执行操作
-- 使用"查找替换"功能快速修改文本
-- "查找重复"功能可检测重复的单词和成语
-
-提示：处理后的文本会自动复制到剪贴板，方便您粘贴到其他应用程序中。
-
-祝您使用愉快！
-`;
-            updateStatistics();
         });
     </script>
 </body>
