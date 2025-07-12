@@ -699,7 +699,9 @@
                 textArea.addEventListener('input', updateStatistics);
                 
                 // 打开文件按钮
-                openFileBtn.addEventListener('click', () => fileInput.click());
+                openFileBtn.addEventListener('click', function() {
+                    fileInput.click();
+                });
                 
                 // 文件选择处理
                 fileInput.addEventListener('change', handleFileSelect);
@@ -738,8 +740,13 @@
                 });
                 
                 // 关闭模态框
-                closeModalBtn.addEventListener('click', () => resultModal.style.display = 'none');
-                okBtn.addEventListener('click', () => resultModal.style.display = 'none');
+                closeModalBtn.addEventListener('click', function() {
+                    resultModal.style.display = 'none';
+                });
+                
+                okBtn.addEventListener('click', function() {
+                    resultModal.style.display = 'none';
+                });
                 
                 // 更新初始统计
                 updateStatistics();
@@ -749,379 +756,424 @@
             function showToast(message) {
                 toast.textContent = message;
                 toast.style.display = 'block';
-                setTimeout(() => {
+                setTimeout(function() {
                     toast.style.display = 'none';
                 }, 3000);
             }
             
             // 更新文本统计信息
             function updateStatistics() {
-                const text = textArea.value;
-                
-                // 总字数（不包括换行符）
-                const totalChars = text.replace(/\n|\r/g, '').length;
-                
-                // 中文字数
-                const chineseChars = (text.match(/[\u4e00-\u9fff]/g) || []).length;
-                
-                // 阿拉伯数字
-                const arabicNumbers = (text.match(/\d/g) || []).length;
-                
-                // 标点符号
-                const punctuation = (text.match(/[^\w\s\u4e00-\u9fff]/g) || []).length;
-                
-                // 字母数
-                const letters = (text.match(/[a-zA-Z]/g) || []).length;
-                
-                // 段落数
-                const paragraphs = text.split('\n').filter(line => line.trim() !== '').length;
-                
-                // 更新状态栏
-                document.getElementById('totalChars').textContent = `总字数: ${totalChars}`;
-                document.getElementById('chineseChars').textContent = `中文字数: ${chineseChars}`;
-                document.getElementById('numbers').textContent = `阿拉伯数字: ${arabicNumbers}`;
-                document.getElementById('punctuation').textContent = `标点符号: ${punctuation}`;
-                document.getElementById('paragraphs').textContent = `段落数: ${paragraphs}`;
-                document.getElementById('letters').textContent = `字母数: ${letters}`;
-                document.getElementById('filename').textContent = `文件: ${currentFile}`;
+                try {
+                    const text = textArea.value;
+                    
+                    // 总字数（不包括换行符）
+                    const totalChars = text.replace(/\n|\r/g, '').length;
+                    
+                    // 中文字数
+                    const chineseChars = (text.match(/[\u4e00-\u9fff]/g) || []).length;
+                    
+                    // 阿拉伯数字
+                    const arabicNumbers = (text.match(/\d/g) || []).length;
+                    
+                    // 标点符号
+                    const punctuation = (text.match(/[^\w\s\u4e00-\u9fff]/g) || []).length;
+                    
+                    // 字母数
+                    const letters = (text.match(/[a-zA-Z]/g) || []).length;
+                    
+                    // 段落数
+                    const paragraphs = text.split('\n').filter(line => line.trim() !== '').length;
+                    
+                    // 更新状态栏
+                    document.getElementById('totalChars').textContent = `总字数: ${totalChars}`;
+                    document.getElementById('chineseChars').textContent = `中文字数: ${chineseChars}`;
+                    document.getElementById('numbers').textContent = `阿拉伯数字: ${arabicNumbers}`;
+                    document.getElementById('punctuation').textContent = `标点符号: ${punctuation}`;
+                    document.getElementById('paragraphs').textContent = `段落数: ${paragraphs}`;
+                    document.getElementById('letters').textContent = `字母数: ${letters}`;
+                    document.getElementById('filename').textContent = `文件: ${currentFile}`;
+                } catch (e) {
+                    console.error("更新统计信息时出错:", e);
+                }
             }
             
             // 处理文件选择
             function handleFileSelect(event) {
-                const file = event.target.files[0];
-                if (!file) return;
-                
-                currentFile = file.name;
-                progressContainer.style.display = 'block';
-                progressLabel.textContent = "正在加载文件...";
-                progressFill.style.width = '0%';
-                
-                const reader = new FileReader();
-                
-                reader.onload = function(e) {
-                    textArea.value = e.target.result;
-                    progressContainer.style.display = 'none';
-                    updateStatistics();
-                    showToast(`文件加载成功: ${file.name}`);
-                };
-                
-                reader.onerror = function() {
-                    progressContainer.style.display = 'none';
-                    showToast("文件加载失败，请重试");
-                };
-                
-                reader.readAsText(file);
+                try {
+                    const file = event.target.files[0];
+                    if (!file) return;
+                    
+                    currentFile = file.name;
+                    progressContainer.style.display = 'block';
+                    progressLabel.textContent = "正在加载文件...";
+                    progressFill.style.width = '0%';
+                    
+                    const reader = new FileReader();
+                    
+                    reader.onload = function(e) {
+                        textArea.value = e.target.result;
+                        progressContainer.style.display = 'none';
+                        updateStatistics();
+                        showToast(`文件加载成功: ${file.name}`);
+                    };
+                    
+                    reader.onerror = function() {
+                        progressContainer.style.display = 'none';
+                        showToast("文件加载失败，请重试");
+                    };
+                    
+                    reader.readAsText(file);
+                } catch (e) {
+                    console.error("处理文件选择时出错:", e);
+                    showToast("文件处理出错");
+                }
             }
             
             // 清空输入
             function clearInput() {
-                textArea.value = '';
-                currentFile = "无";
-                updateStatistics();
-                hideSearchPanel();
-                showToast("文本区域已清空");
+                try {
+                    textArea.value = '';
+                    currentFile = "无";
+                    updateStatistics();
+                    hideSearchPanel();
+                    showToast("文本区域已清空");
+                } catch (e) {
+                    console.error("清空输入时出错:", e);
+                }
             }
             
             // 显示/隐藏查找面板
             function toggleSearchPanel() {
-                if (searchPanel.style.display === 'block') {
-                    hideSearchPanel();
-                } else {
-                    searchPanel.style.display = 'block';
-                    document.getElementById('findInput').focus();
+                try {
+                    if (searchPanel.style.display === 'block') {
+                        hideSearchPanel();
+                    } else {
+                        searchPanel.style.display = 'block';
+                        document.getElementById('findInput').focus();
+                    }
+                } catch (e) {
+                    console.error("切换查找面板时出错:", e);
                 }
             }
             
             function hideSearchPanel() {
-                searchPanel.style.display = 'none';
-                document.getElementById('searchStatus').textContent = '';
+                try {
+                    searchPanel.style.display = 'none';
+                    document.getElementById('searchStatus').textContent = '';
+                } catch (e) {
+                    console.error("隐藏查找面板时出错:", e);
+                }
             }
             
             // 处理文本
             function processText() {
-                let text = textArea.value;
-                
-                if (!text.trim()) {
-                    showToast("请输入文本内容！");
-                    return;
-                }
-                
-                // 大小写转换
-                const caseOption = document.querySelector('input[name="case"]:checked').id;
-                if (caseOption === "caseUpper") {
-                    text = text.toUpperCase();
-                } else if (caseOption === "caseLower") {
-                    text = text.toLowerCase();
-                } else if (caseOption === "caseCapitalize") {
-                    text = text.split('. ').map(sentence => {
-                        return sentence.charAt(0).toUpperCase() + sentence.slice(1);
-                    }).join('. ');
-                }
-                
-                // 删除字母
-                if (document.getElementById('removeLetters').checked) {
-                    text = text.replace(/[a-zA-Z]/g, '');
-                }
-                
-                // 删除汉字
-                if (document.getElementById('removeChinese').checked) {
-                    text = text.replace(/[\u4e00-\u9fff]/g, '');
-                }
-                
-                // 删除数字
-                if (document.getElementById('removeNumbers').checked) {
-                    text = text.replace(/\d+/g, '');
-                }
-                
-                // 删除符号
-                if (document.getElementById('removePunctuation').checked) {
-                    text = text.replace(/[^\w\s\u4e00-\u9fff]/g, '');
-                }
-                
-                // 删除空格
-                if (document.getElementById('removeSpaces').checked) {
-                    text = text.replace(/\s+/g, ' ').trim();
-                }
-                
-                // 空格自动换行
-                if (document.getElementById('wrapOnSpace').checked) {
-                    text = text.replace(/ /g, '\n');
-                }
-                
-                // 删除空行
-                if (document.getElementById('removeBlankLines').checked) {
-                    text = text.replace(/\n\s*\n/g, '\n');
-                    text = text.replace(/^\s*\n/, '');
-                    text = text.replace(/\n\s*$/, '\n');
-                    text = text.replace(/\n{3,}/g, '\n\n');
-                }
-                
-                // 段首缩进
-                const indentSize = parseInt(document.getElementById('indent').value);
-                if (indentSize > 0) {
-                    const indent = ' '.repeat(indentSize);
-                    text = text.split('\n').map(line => {
-                        return line.trim() ? indent + line.trim() : '';
-                    }).join('\n');
-                }
-                
-                // 文本对齐
-                const alignOption = document.getElementById('align').value;
-                if (alignOption !== 'left') {
-                    const lines = text.split('\n');
-                    const maxLength = Math.max(...lines.map(line => line.length));
+                try {
+                    let text = textArea.value;
                     
-                    if (alignOption === 'right') {
-                        text = lines.map(line => line.padStart(maxLength)).join('\n');
-                    } else if (alignOption === 'center') {
-                        text = lines.map(line => {
-                            const padding = Math.floor((maxLength - line.length) / 2);
-                            return ' '.repeat(padding) + line;
-                        }).join('\n');
-                    } else if (alignOption === 'justify') {
-                        text = lines.map(line => {
-                            const words = line.split(' ');
-                            if (words.length < 2) return line;
-                            
-                            const spacesToAdd = maxLength - line.replace(/\s+/g, '').length;
-                            const spaceSlots = words.length - 1;
-                            const spacesPerSlot = Math.floor(spacesToAdd / spaceSlots);
-                            const extraSpaces = spacesToAdd % spaceSlots;
-                            
-                            let result = words[0];
-                            for (let i = 1; i < words.length; i++) {
-                                const spaces = ' '.repeat(spacesPerSlot + (i <= extraSpaces ? 1 : 0));
-                                result += spaces + words[i];
-                            }
-                            return result;
+                    if (!text.trim()) {
+                        showToast("请输入文本内容！");
+                        return;
+                    }
+                    
+                    // 大小写转换
+                    const caseOption = document.querySelector('input[name="case"]:checked').id;
+                    if (caseOption === "caseUpper") {
+                        text = text.toUpperCase();
+                    } else if (caseOption === "caseLower") {
+                        text = text.toLowerCase();
+                    } else if (caseOption === "caseCapitalize") {
+                        text = text.split('. ').map(sentence => {
+                            return sentence.charAt(0).toUpperCase() + sentence.slice(1);
+                        }).join('. ');
+                    }
+                    
+                    // 删除字母
+                    if (document.getElementById('removeLetters').checked) {
+                        text = text.replace(/[a-zA-Z]/g, '');
+                    }
+                    
+                    // 删除汉字
+                    if (document.getElementById('removeChinese').checked) {
+                        text = text.replace(/[\u4e00-\u9fff]/g, '');
+                    }
+                    
+                    // 删除数字
+                    if (document.getElementById('removeNumbers').checked) {
+                        text = text.replace(/\d+/g, '');
+                    }
+                    
+                    // 删除符号
+                    if (document.getElementById('removePunctuation').checked) {
+                        text = text.replace(/[^\w\s\u4e00-\u9fff]/g, '');
+                    }
+                    
+                    // 删除空格
+                    if (document.getElementById('removeSpaces').checked) {
+                        text = text.replace(/\s+/g, ' ').trim();
+                    }
+                    
+                    // 空格自动换行
+                    if (document.getElementById('wrapOnSpace').checked) {
+                        text = text.replace(/ /g, '\n');
+                    }
+                    
+                    // 删除空行
+                    if (document.getElementById('removeBlankLines').checked) {
+                        text = text.replace(/\n\s*\n/g, '\n');
+                        text = text.replace(/^\s*\n/, '');
+                        text = text.replace(/\n\s*$/, '\n');
+                        text = text.replace(/\n{3,}/g, '\n\n');
+                    }
+                    
+                    // 段首缩进
+                    const indentSize = parseInt(document.getElementById('indent').value);
+                    if (indentSize > 0) {
+                        const indent = ' '.repeat(indentSize);
+                        text = text.split('\n').map(line => {
+                            return line.trim() ? indent + line.trim() : '';
                         }).join('\n');
                     }
+                    
+                    // 文本对齐
+                    const alignOption = document.getElementById('align').value;
+                    if (alignOption !== 'left') {
+                        const lines = text.split('\n');
+                        const maxLength = Math.max(...lines.map(line => line.length));
+                        
+                        if (alignOption === 'right') {
+                            text = lines.map(line => line.padStart(maxLength)).join('\n');
+                        } else if (alignOption === 'center') {
+                            text = lines.map(line => {
+                                const padding = Math.floor((maxLength - line.length) / 2);
+                                return ' '.repeat(padding) + line;
+                            }).join('\n');
+                        } else if (alignOption === 'justify') {
+                            text = lines.map(line => {
+                                const words = line.split(' ');
+                                if (words.length < 2) return line;
+                                
+                                const spacesToAdd = maxLength - line.replace(/\s+/g, '').length;
+                                const spaceSlots = words.length - 1;
+                                const spacesPerSlot = Math.floor(spacesToAdd / spaceSlots);
+                                const extraSpaces = spacesToAdd % spaceSlots;
+                                
+                                let result = words[0];
+                                for (let i = 1; i < words.length; i++) {
+                                    const spaces = ' '.repeat(spacesPerSlot + (i <= extraSpaces ? 1 : 0));
+                                    result += spaces + words[i];
+                                }
+                                return result;
+                            }).join('\n');
+                        }
+                    }
+                    
+                    // 更新文本区域
+                    textArea.value = text;
+                    
+                    // 更新统计信息
+                    updateStatistics();
+                    
+                    // 复制到剪贴板
+                    textArea.select();
+                    document.execCommand('copy');
+                    
+                    showToast("文本处理完成！结果已复制到剪贴板");
+                } catch (e) {
+                    console.error("处理文本时出错:", e);
+                    showToast("处理文本时出错");
                 }
-                
-                // 更新文本区域
-                textArea.value = text;
-                
-                // 更新统计信息
-                updateStatistics();
-                
-                // 复制到剪贴板
-                textArea.select();
-                document.execCommand('copy');
-                
-                showToast("文本处理完成！结果已复制到剪贴板");
             }
             
             // 查找文本
             function findText() {
-                const findInput = document.getElementById('findInput').value;
-                if (!findInput) {
-                    showToast("请输入查找内容！");
-                    return;
-                }
-                
-                const text = textArea.value;
-                const startIndex = textArea.selectionStart;
-                const direction = document.getElementById('direction').value;
-                const useRegex = document.getElementById('regexCheckbox').checked;
-                const status = document.getElementById('searchStatus');
-                
-                let foundIndex = -1;
-                
-                if (useRegex) {
-                    try {
-                        const regex = new RegExp(findInput, 'g');
-                        let match;
-                        if (direction === 'down') {
-                            regex.lastIndex = startIndex;
-                            match = regex.exec(text);
-                        } else {
-                            // 向上搜索 - 找到当前位置之前的所有匹配，取最后一个
-                            const matches = [];
-                            while ((match = regex.exec(text)) !== null) {
-                                if (match.index < startIndex) {
-                                    matches.push(match);
-                                } else {
-                                    break;
+                try {
+                    const findInput = document.getElementById('findInput').value;
+                    if (!findInput) {
+                        showToast("请输入查找内容！");
+                        return;
+                    }
+                    
+                    const text = textArea.value;
+                    const startIndex = textArea.selectionStart;
+                    const direction = document.getElementById('direction').value;
+                    const useRegex = document.getElementById('regexCheckbox').checked;
+                    const status = document.getElementById('searchStatus');
+                    
+                    let foundIndex = -1;
+                    
+                    if (useRegex) {
+                        try {
+                            const regex = new RegExp(findInput, 'g');
+                            let match;
+                            if (direction === 'down') {
+                                regex.lastIndex = startIndex;
+                                match = regex.exec(text);
+                            } else {
+                                // 向上搜索 - 找到当前位置之前的所有匹配，取最后一个
+                                const matches = [];
+                                while ((match = regex.exec(text)) !== null) {
+                                    if (match.index < startIndex) {
+                                        matches.push(match);
+                                    } else {
+                                        break;
+                                    }
                                 }
+                                match = matches.length > 0 ? matches[matches.length - 1] : null;
                             }
-                            match = matches.length > 0 ? matches[matches.length - 1] : null;
+                            
+                            if (match) {
+                                foundIndex = match.index;
+                                selectText(foundIndex, foundIndex + match[0].length);
+                                status.textContent = '';
+                                showToast("找到匹配内容");
+                            } else {
+                                status.textContent = direction === 'down' 
+                                    ? "已到达文档末尾，从头开始搜索" 
+                                    : "已到达文档开头，从末尾开始搜索";
+                                // 重置搜索位置
+                                setTimeout(function() {
+                                    if (direction === 'down') {
+                                        textArea.selectionStart = 0;
+                                        textArea.selectionEnd = 0;
+                                    } else {
+                                        textArea.selectionStart = text.length;
+                                        textArea.selectionEnd = text.length;
+                                    }
+                                    findText();
+                                }, 1000);
+                            }
+                        } catch (e) {
+                            status.textContent = `正则表达式错误: ${e.message}`;
+                        }
+                    } else {
+                        if (direction === 'down') {
+                            foundIndex = text.indexOf(findInput, startIndex);
+                            if (foundIndex === -1) {
+                                // 从头开始搜索
+                                foundIndex = text.indexOf(findInput, 0);
+                                status.textContent = "已到达文档末尾，从头开始搜索";
+                            }
+                        } else {
+                            foundIndex = text.lastIndexOf(findInput, startIndex - 1);
+                            if (foundIndex === -1) {
+                                // 从末尾开始搜索
+                                foundIndex = text.lastIndexOf(findInput, text.length);
+                                status.textContent = "已到达文档开头，从末尾开始搜索";
+                            }
                         }
                         
-                        if (match) {
-                            foundIndex = match.index;
-                            selectText(foundIndex, foundIndex + match[0].length);
+                        if (foundIndex !== -1) {
+                            selectText(foundIndex, foundIndex + findInput.length);
                             status.textContent = '';
                             showToast("找到匹配内容");
                         } else {
-                            status.textContent = direction === 'down' 
-                                ? "已到达文档末尾，从头开始搜索" 
-                                : "已到达文档开头，从末尾开始搜索";
-                            // 重置搜索位置
-                            setTimeout(() => {
-                                if (direction === 'down') {
-                                    textArea.selectionStart = 0;
-                                    textArea.selectionEnd = 0;
-                                } else {
-                                    textArea.selectionStart = text.length;
-                                    textArea.selectionEnd = text.length;
-                                }
-                                findText();
-                            }, 1000);
-                        }
-                    } catch (e) {
-                        status.textContent = `正则表达式错误: ${e.message}`;
-                    }
-                } else {
-                    if (direction === 'down') {
-                        foundIndex = text.indexOf(findInput, startIndex);
-                        if (foundIndex === -1) {
-                            // 从头开始搜索
-                            foundIndex = text.indexOf(findInput, 0);
-                            status.textContent = "已到达文档末尾，从头开始搜索";
-                        }
-                    } else {
-                        foundIndex = text.lastIndexOf(findInput, startIndex - 1);
-                        if (foundIndex === -1) {
-                            // 从末尾开始搜索
-                            foundIndex = text.lastIndexOf(findInput, text.length);
-                            status.textContent = "已到达文档开头，从末尾开始搜索";
+                            status.textContent = "未找到匹配内容";
                         }
                     }
-                    
-                    if (foundIndex !== -1) {
-                        selectText(foundIndex, foundIndex + findInput.length);
-                        status.textContent = '';
-                        showToast("找到匹配内容");
-                    } else {
-                        status.textContent = "未找到匹配内容";
-                    }
+                } catch (e) {
+                    console.error("查找文本时出错:", e);
+                    showToast("查找文本时出错");
                 }
             }
             
             // 选中文本
             function selectText(start, end) {
-                textArea.focus();
-                textArea.selectionStart = start;
-                textArea.selectionEnd = end;
-                
-                // 滚动到可见区域
-                const lineHeight = parseInt(getComputedStyle(textArea).lineHeight);
-                const lines = textArea.value.substr(0, start).split('\n').length;
-                textArea.scrollTop = (lines - 5) * lineHeight;
+                try {
+                    textArea.focus();
+                    textArea.selectionStart = start;
+                    textArea.selectionEnd = end;
+                    
+                    // 滚动到可见区域
+                    const lineHeight = parseInt(getComputedStyle(textArea).lineHeight);
+                    const lines = textArea.value.substr(0, start).split('\n').length;
+                    textArea.scrollTop = (lines - 5) * lineHeight;
+                } catch (e) {
+                    console.error("选中文本时出错:", e);
+                }
             }
             
             // 替换文本
             function replaceText() {
-                const findInput = document.getElementById('findInput').value;
-                const replaceInput = document.getElementById('replaceInput').value;
-                
-                if (!findInput) {
-                    showToast("请输入查找内容！");
-                    return;
-                }
-                
-                const selectedText = textArea.value.substring(textArea.selectionStart, textArea.selectionEnd);
-                const useRegex = document.getElementById('regexCheckbox').checked;
-                
-                if (selectedText === findInput || (useRegex && new RegExp(findInput).test(selectedText))) {
-                    const start = textArea.selectionStart;
-                    const end = textArea.selectionEnd;
+                try {
+                    const findInput = document.getElementById('findInput').value;
+                    const replaceInput = document.getElementById('replaceInput').value;
                     
-                    // 替换选中的文本
-                    const before = textArea.value.substring(0, start);
-                    const after = textArea.value.substring(end);
-                    textArea.value = before + replaceInput + after;
+                    if (!findInput) {
+                        showToast("请输入查找内容！");
+                        return;
+                    }
                     
-                    // 更新文本区域后重新设置光标位置
-                    textArea.selectionStart = start + replaceInput.length;
-                    textArea.selectionEnd = start + replaceInput.length;
+                    const selectedText = textArea.value.substring(textArea.selectionStart, textArea.selectionEnd);
+                    const useRegex = document.getElementById('regexCheckbox').checked;
                     
-                    // 更新统计
-                    updateStatistics();
-                    
-                    // 查找下一个
-                    findText();
-                    showToast("已替换当前匹配内容");
-                } else {
-                    // 查找下一个
-                    findText();
+                    if (selectedText === findInput || (useRegex && new RegExp(findInput).test(selectedText))) {
+                        const start = textArea.selectionStart;
+                        const end = textArea.selectionEnd;
+                        
+                        // 替换选中的文本
+                        const before = textArea.value.substring(0, start);
+                        const after = textArea.value.substring(end);
+                        textArea.value = before + replaceInput + after;
+                        
+                        // 更新文本区域后重新设置光标位置
+                        textArea.selectionStart = start + replaceInput.length;
+                        textArea.selectionEnd = start + replaceInput.length;
+                        
+                        // 更新统计
+                        updateStatistics();
+                        
+                        // 查找下一个
+                        findText();
+                        showToast("已替换当前匹配内容");
+                    } else {
+                        // 查找下一个
+                        findText();
+                    }
+                } catch (e) {
+                    console.error("替换文本时出错:", e);
+                    showToast("替换文本时出错");
                 }
             }
             
             // 全部替换
             function replaceAll() {
-                const findInput = document.getElementById('findInput').value;
-                const replaceInput = document.getElementById('replaceInput').value;
-                
-                if (!findInput) {
-                    showToast("请输入查找内容！");
-                    return;
-                }
-                
-                const useRegex = document.getElementById('regexCheckbox').checked;
-                let text = textArea.value;
-                let count = 0;
-                
-                if (useRegex) {
-                    try {
-                        const regex = new RegExp(findInput, 'g');
-                        text = text.replace(regex, () => {
-                            count++;
-                            return replaceInput;
-                        });
-                    } catch (e) {
-                        document.getElementById('searchStatus').textContent = `正则表达式错误: ${e.message}`;
+                try {
+                    const findInput = document.getElementById('findInput').value;
+                    const replaceInput = document.getElementById('replaceInput').value;
+                    
+                    if (!findInput) {
+                        showToast("请输入查找内容！");
                         return;
                     }
-                } else {
-                    count = (text.match(new RegExp(escapeRegExp(findInput), 'g') || []).length;
-                    text = text.replace(new RegExp(escapeRegExp(findInput), 'g'), replaceInput);
+                    
+                    const useRegex = document.getElementById('regexCheckbox').checked;
+                    let text = textArea.value;
+                    let count = 0;
+                    
+                    if (useRegex) {
+                        try {
+                            const regex = new RegExp(findInput, 'g');
+                            text = text.replace(regex, function() {
+                                count++;
+                                return replaceInput;
+                            });
+                        } catch (e) {
+                            document.getElementById('searchStatus').textContent = `正则表达式错误: ${e.message}`;
+                            return;
+                        }
+                    } else {
+                        count = (text.match(new RegExp(escapeRegExp(findInput), 'g') || []).length;
+                        text = text.replace(new RegExp(escapeRegExp(findInput), 'g'), replaceInput);
+                    }
+                    
+                    textArea.value = text;
+                    updateStatistics();
+                    document.getElementById('searchStatus').textContent = `已替换 ${count} 处匹配内容！`;
+                    showToast(`已替换 ${count} 处匹配内容`);
+                } catch (e) {
+                    console.error("全部替换时出错:", e);
+                    showToast("全部替换时出错");
                 }
-                
-                textArea.value = text;
-                updateStatistics();
-                document.getElementById('searchStatus').textContent = `已替换 ${count} 处匹配内容！`;
-                showToast(`已替换 ${count} 处匹配内容`);
             }
             
             // 转义正则特殊字符
@@ -1131,74 +1183,90 @@
             
             // 查找重复项
             function findDuplicates() {
-                const text = textArea.value;
-                if (!text.trim()) {
-                    showToast("请输入文本内容！");
-                    return;
-                }
-                
-                // 检测重复的英文单词
-                const englishWords = text.match(/\b[a-zA-Z]+\b/g) || [];
-                const wordCount = {};
-                englishWords.forEach(word => {
-                    const wordLower = word.toLowerCase();
-                    wordCount[wordLower] = (wordCount[wordLower] || 0) + 1;
-                });
-                
-                const duplicateWords = Object.entries(wordCount)
-                    .filter(([word, count]) => count > 1)
-                    .sort((a, b) => b[1] - a[1]);
-                
-                // 检测重复的中文成语
-                const chineseIdioms = text.match(/[\u4e00-\u9fff]{4}/g) || [];
-                const idiomCount = {};
-                chineseIdioms.forEach(idiom => {
-                    idiomCount[idiom] = (idiomCount[idiom] || 0) + 1;
-                });
-                
-                const duplicateIdioms = Object.entries(idiomCount)
-                    .filter(([idiom, count]) => count > 1)
-                    .sort((a, b) => b[1] - a[1]);
-                
-                // 构建结果HTML
-                let resultHTML = '<div class="result-section">';
-                
-                if (duplicateWords.length > 0) {
-                    resultHTML += '<h4>重复的英文单词:</h4><ul>';
-                    duplicateWords.forEach(([word, count]) => {
-                        resultHTML += `<li><strong>${word}</strong>: ${count} 次</li>`;
+                try {
+                    const text = textArea.value;
+                    if (!text.trim()) {
+                        showToast("请输入文本内容！");
+                        return;
+                    }
+                    
+                    // 检测重复的英文单词
+                    const englishWords = text.match(/\b[a-zA-Z]+\b/g) || [];
+                    const wordCount = {};
+                    englishWords.forEach(function(word) {
+                        const wordLower = word.toLowerCase();
+                        wordCount[wordLower] = (wordCount[wordLower] || 0) + 1;
                     });
-                    resultHTML += '</ul>';
-                }
-                
-                if (duplicateIdioms.length > 0) {
-                    resultHTML += '<h4>重复的中文成语:</h4><ul>';
-                    duplicateIdioms.forEach(([idiom, count]) => {
-                        resultHTML += `<li><strong>${idiom}</strong>: ${count} 次</li>`;
+                    
+                    const duplicateWords = Object.entries(wordCount)
+                        .filter(function([word, count]) {
+                            return count > 1;
+                        })
+                        .sort(function(a, b) {
+                            return b[1] - a[1];
+                        });
+                    
+                    // 检测重复的中文成语
+                    const chineseIdioms = text.match(/[\u4e00-\u9fff]{4}/g) || [];
+                    const idiomCount = {};
+                    chineseIdioms.forEach(function(idiom) {
+                        idiomCount[idiom] = (idiomCount[idiom] || 0) + 1;
                     });
-                    resultHTML += '</ul>';
+                    
+                    const duplicateIdioms = Object.entries(idiomCount)
+                        .filter(function([idiom, count]) {
+                            return count > 1;
+                        })
+                        .sort(function(a, b) {
+                            return b[1] - a[1];
+                        });
+                    
+                    // 构建结果HTML
+                    let resultHTML = '<div class="result-section">';
+                    
+                    if (duplicateWords.length > 0) {
+                        resultHTML += '<h4>重复的英文单词:</h4><ul>';
+                        duplicateWords.forEach(function([word, count]) {
+                            resultHTML += `<li><strong>${word}</strong>: ${count} 次</li>`;
+                        });
+                        resultHTML += '</ul>';
+                    }
+                    
+                    if (duplicateIdioms.length > 0) {
+                        resultHTML += '<h4>重复的中文成语:</h4><ul>';
+                        duplicateIdioms.forEach(function([idiom, count]) {
+                            resultHTML += `<li><strong>${idiom}</strong>: ${count} 次</li>`;
+                        });
+                        resultHTML += '</ul>';
+                    }
+                    
+                    if (duplicateWords.length === 0 && duplicateIdioms.length === 0) {
+                        resultHTML += '<p>未发现重复的英文单词或中文成语！</p>';
+                    } else {
+                        const totalTypes = duplicateWords.length + duplicateIdioms.length;
+                        const totalInstances = duplicateWords.reduce(function(sum, [, count]) {
+                            return sum + count;
+                        }, 0) + duplicateIdioms.reduce(function(sum, [, count]) {
+                            return sum + count;
+                        }, 0) - totalTypes;
+                        resultHTML += `<p class="summary">总计发现 ${totalTypes} 种重复内容，共 ${totalInstances} 处重复。</p>`;
+                    }
+                    
+                    resultHTML += '</div>';
+                    
+                    // 更新并显示结果模态框
+                    document.getElementById('resultContent').innerHTML = resultHTML;
+                    resultModal.style.display = 'flex';
+                    
+                    // 更新重复项计数
+                    const duplicateCount = duplicateWords.length + duplicateIdioms.length;
+                    document.getElementById('duplicates').textContent = `重复项: ${duplicateCount}`;
+                    
+                    showToast("重复项检测完成");
+                } catch (e) {
+                    console.error("查找重复项时出错:", e);
+                    showToast("查找重复项时出错");
                 }
-                
-                if (duplicateWords.length === 0 && duplicateIdioms.length === 0) {
-                    resultHTML += '<p>未发现重复的英文单词或中文成语！</p>';
-                } else {
-                    const totalTypes = duplicateWords.length + duplicateIdioms.length;
-                    const totalInstances = duplicateWords.reduce((sum, [, count]) => sum + count, 0) +
-                                           duplicateIdioms.reduce((sum, [, count]) => sum + count, 0) - totalTypes;
-                    resultHTML += `<p class="summary">总计发现 ${totalTypes} 种重复内容，共 ${totalInstances} 处重复。</p>`;
-                }
-                
-                resultHTML += '</div>';
-                
-                // 更新并显示结果模态框
-                document.getElementById('resultContent').innerHTML = resultHTML;
-                resultModal.style.display = 'flex';
-                
-                // 更新重复项计数
-                const duplicateCount = duplicateWords.length + duplicateIdioms.length;
-                document.getElementById('duplicates').textContent = `重复项: ${duplicateCount}`;
-                
-                showToast("重复项检测完成");
             }
             
             // 初始化应用
