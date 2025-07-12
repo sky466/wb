@@ -396,6 +396,14 @@
             box-shadow: 0 5px 15px rgba(0,0,0,0.2);
             z-index: 2000;
             display: none;
+            animation: fadeInOut 3s forwards;
+        }
+        
+        @keyframes fadeInOut {
+            0% { opacity: 0; transform: translateY(20px); }
+            10% { opacity: 1; transform: translateY(0); }
+            90% { opacity: 1; transform: translateY(0); }
+            100% { opacity: 0; transform: translateY(20px); }
         }
         
         .file-upload {
@@ -789,10 +797,6 @@
                 progressFill.style.width = '0%';
                 
                 const reader = new FileReader();
-                let progress = 0;
-                const chunkSize = 10240; // 10KB
-                const totalChunks = Math.ceil(file.size / chunkSize);
-                let currentChunk = 0;
                 
                 reader.onload = function(e) {
                     textArea.value = e.target.result;
@@ -801,13 +805,9 @@
                     showToast(`文件加载成功: ${file.name}`);
                 };
                 
-                reader.onprogress = function(e) {
-                    if (e.lengthComputable) {
-                        progress = Math.round((e.loaded / e.total) * 100);
-                        currentChunk = Math.round(e.loaded / chunkSize);
-                        progressFill.style.width = `${progress}%`;
-                        progressLabel.textContent = `正在加载文件: ${progress}% (${currentChunk}/${totalChunks}块)`;
-                    }
+                reader.onerror = function() {
+                    progressContainer.style.display = 'none';
+                    showToast("文件加载失败，请重试");
                 };
                 
                 reader.readAsText(file);
