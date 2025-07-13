@@ -687,6 +687,7 @@
                                     <option value="email">邮箱</option>
                                     <option value="letters">英文字母</option>
                                     <option value="chinese-space">中文间多余空格</option>
+                                    <option value="excess-space">多余空格（字母、数字、汉字间）</option>
                                 </select>
                             </div>
                             
@@ -857,7 +858,8 @@
                 number: '\\d+',
                 email: '[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}',
                 letters: '[a-zA-Z]',
-                "chinese-space": '(?<![\\r\\n 　\\t章节節回集卷文篇部])[ 　\\t]+(?![0-9a-zA-Z０-９Ａ-Ｚａ-ｚ 　\\t第])|(?<![\\r\\n0-9a-zA-Z０-９Ａ-Ｚａ-ｚ 　\\t章节節回集卷文篇部])[ 　\\t]+'
+                "chinese-space": '(?<![\\r\\n 　\\t章节節回集卷文篇部])[ 　\\t]+(?![0-9a-zA-Z０-９Ａ-Ｚａ-ｚ 　\\t第])|(?<![\\r\\n0-9a-zA-Z０-９Ａ-Ｚａ-ｚ 　\\t章节節回集卷文篇部])[ 　\\t]+',
+                "excess-space": "(?<=[\\w\\u4e00-\\u9fff]) (?=[\\w\\u4e00-\\u9fff])"
             };
             
             // 当前状态
