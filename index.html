@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>高级文本排版工具</title>
+    <title>删除多余文本工具</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * {
@@ -22,16 +22,14 @@
             --warning: #f39c12;
             --dark: #2c3e50;
             --light: #ecf0f1;
-            --gray: #95a5a6;
             --highlight: #ffeb3b;
             --duplicate: #ffb6c1;
-            --success: #2ecc71;
             --space-highlight: #e1bee7;
         }
         
         body {
             background: url('bg.jpg') no-repeat center center fixed;
-            background-size: cover;
+    background-size: cover;
             min-height: 100vh;
             padding: 20px;
             display: flex;
@@ -61,14 +59,6 @@
             overflow: hidden;
         }
         
-        .text-section {
-            padding: 20px;
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            position: relative;
-        }
-        
         .section-title {
             background: var(--dark);
             color: white;
@@ -77,6 +67,32 @@
             display: flex;
             align-items: center;
             gap: 10px;
+        }
+        
+        .text-section {
+            padding: 20px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+        
+        .stats-bar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            padding: 8px 15px;
+            background: #f8f9fa;
+            border-radius: 6px;
+            margin-bottom: 10px;
+            font-size: 0.85rem;
+            border: 1px solid #eee;
+        }
+        
+        .stats-item {
+            display: flex;
+            align-items: center;
+            gap: 4px;
         }
         
         .text-area {
@@ -89,7 +105,6 @@
             font-family: 'Consolas', 'Microsoft YaHei', monospace;
             line-height: 1.6;
             box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
-            margin-top: 10px;
             white-space: pre-wrap;
             overflow-wrap: break-word;
             z-index: 10;
@@ -121,7 +136,7 @@
             overflow: auto;
             border-radius: 8px;
             border: 1px solid transparent;
-            margin-top: 10px;
+            margin-top: 45px;
             color: #333;
         }
         
@@ -130,10 +145,30 @@
             background: #f8f9fa;
             border-top: 1px solid #eee;
             border-bottom: 1px solid #eee;
-            color: #333;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        /* 顶部按钮行 */
+        .top-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        /* 控制组容器 */
+        .control-groups {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
         }
         
         .control-group {
+            flex: 1;
+            min-width: 300px;
             margin-bottom: 15px;
         }
         
@@ -144,26 +179,21 @@
             display: flex;
             align-items: center;
             gap: 8px;
+            padding: 5px 0;
+            border-bottom: 2px solid var(--primary);
         }
         
         .options-row {
             display: flex;
             flex-wrap: wrap;
             gap: 15px;
+            margin-top: 10px;
         }
         
         .option-item {
             display: flex;
             align-items: center;
             gap: 5px;
-            color: #333;
-        }
-        
-        .btn-row {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin-top: 15px;
         }
         
         .btn {
@@ -185,6 +215,7 @@
         
         .btn-primary:hover {
             background: var(--primary-dark);
+            transform: translateY(-2px);
         }
         
         .btn-secondary {
@@ -194,6 +225,7 @@
         
         .btn-secondary:hover {
             background: var(--secondary-dark);
+            transform: translateY(-2px);
         }
         
         .btn-warning {
@@ -203,6 +235,7 @@
         
         .btn-warning:hover {
             background: #e67e22;
+            transform: translateY(-2px);
         }
         
         .btn-danger {
@@ -212,21 +245,18 @@
         
         .btn-danger:hover {
             background: #c0392b;
+            transform: translateY(-2px);
         }
         
         .btn-outline {
             background: transparent;
-            border: 1px solid var(--gray);
+            border: 1px solid #95a5a6;
             color: var(--dark);
         }
         
         .btn-outline:hover {
             background: #f0f0f0;
-        }
-        
-        .btn-success {
-            background: var(--success);
-            color: white;
+            transform: translateY(-2px);
         }
         
         .search-panel {
@@ -235,7 +265,9 @@
             border-radius: 8px;
             margin-top: 15px;
             display: none;
-            color: #333;
+            position: relative;
+            z-index: 20;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
         }
         
         .search-row {
@@ -264,7 +296,6 @@
             border-radius: 4px;
             font-size: 14px;
             background: white;
-            color: #333;
         }
         
         .search-input:focus {
@@ -292,7 +323,6 @@
             display: flex;
             justify-content: space-between;
             margin-bottom: 10px;
-            color: #333;
         }
         
         .progress-bar {
@@ -329,6 +359,15 @@
                 flex-direction: column;
                 gap: 5px;
             }
+            
+            .control-groups {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .control-group {
+                min-width: 100%;
+            }
         }
         
         @media (max-width: 480px) {
@@ -345,6 +384,10 @@
                 flex: 1;
                 justify-content: center;
             }
+            
+            .top-buttons {
+                justify-content: center;
+            }
         }
         
         /* 自定义复选框和单选按钮 */
@@ -352,10 +395,6 @@
             width: 18px;
             height: 18px;
             accent-color: var(--primary);
-        }
-        
-        select, .search-input {
-            background: white;
         }
         
         .modal {
@@ -380,7 +419,6 @@
             overflow: auto;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
             position: relative;
-            color: #333;
         }
         
         .modal-header {
@@ -422,34 +460,6 @@
             background-color: var(--space-highlight);
         }
         
-        /* 自定义通知 */
-        .notification {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: white;
-            border-radius: 8px;
-            padding: 20px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-            z-index: 2000;
-            display: none;
-            max-width: 400px;
-            text-align: center;
-            color: #333;
-        }
-        
-        .notification-content {
-            margin: 15px 0;
-            font-size: 16px;
-        }
-        
-        .notification-footer {
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-        }
-        
         .result-item {
             cursor: pointer;
             padding: 5px;
@@ -476,11 +486,25 @@
         
         .search-buttons {
             display: flex;
-            flex-wrap: wrap;
+            gap: 10px;
+            flex-wrap: nowrap;
             gap: 10px;
             margin-top: 20px;
             justify-content: space-between;
             width: 100%;
+        }
+        
+        .temp-message {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            display: none;
+            z-index: 100;
         }
     </style>
 </head>
@@ -489,131 +513,26 @@
         <main class="app-card">
             <div class="section-title">
                 <i class="fas fa-edit"></i>
-                <span>文本编辑区</span>
+                <span>删除多余文本工具</span>
             </div>
             
             <div class="editor-container">
                 <div class="text-section">
+                    <div class="stats-bar" id="statsBar">
+                        <div class="stats-item"><i class="fas fa-font"></i> 总字数: <span id="totalChars">0</span></div>
+                        <div class="stats-item"><i class="fas fa-language"></i> 中文字数: <span id="chineseChars">0</span></div>
+                        <div class="stats-item"><i class="fas fa-hashtag"></i> 数字: <span id="numbers">0</span></div>
+                        <div class="stats-item"><i class="fas fa-keyboard"></i> 字母: <span id="letters">0</span></div>
+                        <div class="stats-item"><i class="fas fa-paragraph"></i> 段落: <span id="paragraphs">0</span></div>
+                        <div class="stats-item"><i class="fas fa-copy"></i> 重复项: <span id="duplicates">0</span></div>
+                    </div>
                     <textarea class="text-area" id="textArea" placeholder="在此输入文本内容，或使用下方功能处理文本..."></textarea>
                     <div class="text-highlight" id="textHighlight"></div>
                 </div>
                 
                 <div class="controls">
-                    <div class="control-group">
-                        <div class="control-group-title">
-                            <i class="fas fa-sliders-h"></i>
-                            <span>文本处理选项</span>
-                        </div>
-                        <div class="options-row">
-                            <div class="option-item">
-                                <input type="checkbox" id="removeSpaces">
-                                <label for="removeSpaces">删除空格</label>
-                            </div>
-                            <div class="option-item">
-                                <input type="checkbox" id="removeBlankLines">
-                                <label for="removeBlankLines">删除空行</label>
-                            </div>
-                            <div class="option-item">
-                                <input type="checkbox" id="removeNumbers">
-                                <label for="removeNumbers">删除数字</label>
-                            </div>
-                            <div class="option-item">
-                                <input type="checkbox" id="removePunctuation">
-                                <label for="removePunctuation">删除符号</label>
-                            </div>
-                            <div class="option-item">
-                                <input type="checkbox" id="wrapOnSpace">
-                                <label for="wrapOnSpace">空格换行</label>
-                            </div>
-                            <div class="option-item">
-                                <input type="checkbox" id="removeLetters">
-                                <label for="removeLetters">删除字母</label>
-                            </div>
-                            <div class="option-item">
-                                <input type="checkbox" id="removeChinese">
-                                <label for="removeChinese">删除汉字</label>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="control-group">
-                        <div class="control-group-title">
-                            <i class="fas fa-exchange-alt"></i>
-                            <span>文本转换</span>
-                        </div>
-                        <div class="options-row">
-                            <div class="option-item">
-                                <span>中文转换：</span>
-                                <div class="options-row">
-                                    <div class="option-item">
-                                        <input type="radio" id="convertNone" name="convert" checked>
-                                        <label for="convertNone">不转换</label>
-                                    </div>
-                                    <div class="option-item">
-                                        <input type="radio" id="convertSimplified" name="convert">
-                                        <label for="convertSimplified">转简体</label>
-                                    </div>
-                                    <div class="option-item">
-                                        <input type="radio" id="convertTraditional" name="convert">
-                                        <label for="convertTraditional">转繁体</label>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <div class="option-item">
-                                <span>大小写：</span>
-                                <div class="options-row">
-                                    <div class="option-item">
-                                        <input type="radio" id="caseNone" name="case" checked>
-                                        <label for="caseNone">无</label>
-                                    </div>
-                                    <div class="option-item">
-                                        <input type="radio" id="caseUpper" name="case">
-                                        <label for="caseUpper">大写</label>
-                                    </div>
-                                    <div class="option-item">
-                                        <input type="radio" id="caseLower" name="case">
-                                        <label for="caseLower">小写</label>
-                                    </div>
-                                    <div class="option-item">
-                                        <input type="radio" id="caseCapitalize" name="case">
-                                        <label for="caseCapitalize">首字母大写</label>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="control-group">
-                        <div class="control-group-title">
-                            <i class="fas fa-align-left"></i>
-                            <span>排版设置</span>
-                        </div>
-                        <div class="options-row">
-                            <div class="option-item">
-                                <label for="indent">缩进：</label>
-                                <select id="indent">
-                                    <option value="0">0 空格</option>
-                                    <option value="1">1 空格</option>
-                                    <option value="2">2 空格</option>
-                                    <option value="4">4 空格</option>
-                                    <option value="8">8 空格</option>
-                                </select>
-                            </div>
-                            
-                            <div class="option-item">
-                                <label for="align">对齐：</label>
-                                <select id="align">
-                                    <option value="left">左对齐</option>
-                                    <option value="right">右对齐</option>
-                                    <option value="center">居中</option>
-                                    <option value="justify">两端对齐</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="btn-row">
+                    <!-- 顶部按钮行 -->
+                    <div class="top-buttons">
                         <button class="btn btn-primary" id="openFileBtn">
                             <i class="fas fa-folder-open"></i>打开
                         </button>
@@ -626,11 +545,137 @@
                         <button class="btn btn-secondary" id="processBtn">
                             <i class="fas fa-cog"></i>处理文本
                         </button>
-                        <button class="btn btn-warning" id="findDuplicatesBtn">
-                            <i class="fas fa-copy"></i>查找重复
-                        </button>
                     </div>
                     
+                    <!-- 控制组容器 -->
+                    <div class="control-groups">
+                        <!-- 文本处理选项 -->
+                        <div class="control-group">
+                            <div class="control-group-title">
+                                <i class="fas fa-sliders-h"></i>
+                                <span>文本处理选项</span>
+                            </div>
+                            <div class="options-row">
+                                <div class="option-item">
+                                    <input type="checkbox" id="removeSpaces">
+                                    <label for="removeSpaces">删除空格</label>
+                                </div>
+                                <div class="option-item">
+                                    <input type="checkbox" id="removeBlankLines">
+                                    <label for="removeBlankLines">删除空行</label>
+                                </div>
+                                <div class="option-item">
+                                    <input type="checkbox" id="removeNumbers">
+                                    <label for="removeNumbers">删除数字</label>
+                                </div>
+                                <div class="option-item">
+                                    <input type="checkbox" id="removePunctuation">
+                                    <label for="removePunctuation">删除符号</label>
+                                </div>
+                                <div class="option-item">
+                                    <input type="checkbox" id="wrapOnSpace">
+                                    <label for="wrapOnSpace">空格换行</label>
+                                </div>
+<div class="option-item">
+    <input type="checkbox" id="wrapOnPeriod">
+    <label for="wrapOnPeriod">句号换行</label>
+</div>
+                                <div class="option-item">
+                                    <input type="checkbox" id="removeLetters">
+                                    <label for="removeLetters">删除字母</label>
+                                </div>
+                                <div class="option-item">
+                                    <input type="checkbox" id="removeChinese">
+                                    <label for="removeChinese">删除汉字</label>
+                                </div>
+                                <div class="option-item">
+                                    <input type="checkbox" id="autoCopy" checked>
+                                    <label for="autoCopy">自动复制</label>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 文本转换 -->
+                        <div class="control-group">
+                            <div class="control-group-title">
+                                <i class="fas fa-exchange-alt"></i>
+                                <span>文本转换</span>
+                            </div>
+                            <div class="options-row">
+                                <div class="option-item">
+                                    <span>中文转换：</span>
+                                    <div class="options-row">
+                                        <div class="option-item">
+                                            <input type="radio" id="convertNone" name="convert" checked>
+                                            <label for="convertNone">不转换</label>
+                                        </div>
+                                        <div class="option-item">
+                                            <input type="radio" id="convertSimplified" name="convert">
+                                            <label for="convertSimplified">转简体</label>
+                                        </div>
+                                        <div class="option-item">
+                                            <input type="radio" id="convertTraditional" name="convert">
+                                            <label for="convertTraditional">转繁体</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="option-item">
+                                    <span>大小写：</span>
+                                    <div class="options-row">
+                                        <div class="option-item">
+                                            <input type="radio" id="caseNone" name="case" checked>
+                                            <label for="caseNone">无</label>
+                                        </div>
+                                        <div class="option-item">
+                                            <input type="radio" id="caseUpper" name="case">
+                                            <label for="caseUpper">大写</label>
+                                        </div>
+                                        <div class="option-item">
+                                            <input type="radio" id="caseLower" name="case">
+                                            <label for="caseLower">小写</label>
+                                        </div>
+                                        <div class="option-item">
+                                            <input type="radio" id="caseCapitalize" name="case">
+                                            <label for="caseCapitalize">首字母大写</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 排版设置 -->
+                        <div class="control-group">
+                            <div class="control-group-title">
+                                <i class="fas fa-align-left"></i>
+                                <span>排版设置</span>
+                            </div>
+                            <div class="options-row">
+                                <div class="option-item">
+                                    <label for="indent">缩进：</label>
+                                    <select id="indent">
+                                        <option value="0">0 空格</option>
+                                        <option value="1">1 空格</option>
+                                        <option value="2">2 空格</option>
+                                        <option value="4">4 空格</option>
+                                        <option value="8">8 空格</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="option-item">
+                                    <label for="align">对齐：</label>
+                                    <select id="align">
+                                        <option value="left">左对齐</option>
+                                        <option value="right">右对齐</option>
+                                        <option value="center">居中</option>
+                                        <option value="justify">两端对齐</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 查找替换面板 -->
                     <div class="search-panel" id="searchPanel">
                         <div class="search-row">
                             <div class="search-field">
@@ -679,10 +724,12 @@
                                 <button class="btn btn-outline" id="replaceBtn">
                                     <i class="fas fa-exchange-alt"></i>替换
                                 </button>
+                                <button class="btn btn-warning" id="findDuplicatesBtn">
+                                    <i class="fas fa-copy"></i>查找重复
+                                </button>
                             </div>
                             
                             <div>
-                                <!-- 修改为全部删除按钮 -->
                                 <button class="btn btn-danger" id="deleteAllBtn">
                                     <i class="fas fa-trash-alt"></i>全部删除
                                 </button>
@@ -710,14 +757,9 @@
                 </div>
                 
                 <div class="status-bar">
-                    <span id="totalChars">总字数: 0</span>
-                    <span id="chineseChars">中文字数: 0</span>
-                    <span id="numbers">阿拉伯数字: 0</span>
-                    <span id="punctuation">标点符号: 0</span>
-                    <span id="paragraphs">段落数: 0</span>
-                    <span id="letters">字母数: 0</span>
                     <span id="filename">文件: 无</span>
-                    <span id="duplicates">重复项: 0</span>
+                    <span id="fileSize">大小: 0 KB</span>
+                    <span id="lastAction">就绪</span>
                 </div>
             </div>
         </main>
@@ -742,53 +784,71 @@
         </div>
     </div>
     
-    <!-- 成功通知弹窗 -->
-    <div class="notification" id="successNotification">
-        <div class="modal-header" style="border-radius: 8px 8px 0 0;">
-            <h3>操作成功</h3>
-            <button class="close-btn" id="closeNotificationBtn">&times;</button>
-        </div>
-        <div class="notification-content">
-            <i class="fas fa-check-circle" style="font-size: 48px; color: var(--success); margin-bottom: 15px;"></i>
-            <p id="notificationMessage">文本处理完成！结果已复制到剪贴板。</p>
-        </div>
-        <div class="notification-footer">
-            <button class="btn btn-success" id="notificationOkBtn">确定</button>
-        </div>
-    </div>
+    <div class="temp-message" id="tempMessage"></div>
     
     <input type="file" id="fileInput" style="display: none;" accept=".txt">
     
     <script>
-        // 页面加载完成后初始化
+        // 扩展简繁体转换字典
+        const conversionDict = {
+            // 简体转繁体
+            toTraditional: {
+                '台': '臺', '湾': '灣', '学': '學', '习': '習',
+                '这': '這', '个': '個', '为': '為', '时': '時',
+                '国': '國', '发': '發', '会': '會', '后': '後',
+                '过': '過', '对': '對', '开': '開', '门': '門',
+                '长': '長', '车': '車', '风': '風', '电': '電',
+                '体': '體', '书': '書', '见': '見', '东': '東',
+                '产': '產', '实': '實', '图': '圖', '点': '點',
+                '认': '認', '说': '說', '话': '話', '请': '請',
+                '问': '問', '题': '題', '计': '計', '设': '設',
+                '项': '項', '页': '頁', '顶': '頂', '预': '預',
+                '领': '領', '频': '頻', '额': '額', '题': '題'
+            },
+            // 繁体转简体
+            toSimplified: {
+                '臺': '台', '灣': '湾', '學': '学', '習': '习',
+                '這': '这', '個': '个', '為': '为', '時': '时',
+                '國': '国', '發': '发', '會': '会', '後': '后',
+                '過': '过', '對': '对', '開': '开', '門': '门',
+                '長': '长', '車': '车', '風': '风', '電': '电',
+                '體': '体', '書': '书', '見': '见', '東': '东',
+                '產': '产', '實': '实', '圖': '图', '點': '点',
+                '認': '认', '說': '说', '話': '话', '請': '请',
+                '問': '问', '題': '题', '計': '计', '設': '设',
+                '項': '项', '頁': '页', '頂': '顶', '預': '预',
+                '領': '领', '頻': '频', '額': '额', '題': '题'
+            }
+        };
+
         document.addEventListener('DOMContentLoaded', function() {
-            // 获取DOM元素
-            const textArea = document.getElementById('textArea');
-            const textHighlight = document.getElementById('textHighlight');
-            const openFileBtn = document.getElementById('openFileBtn');
-            const clearBtn = document.getElementById('clearBtn');
-            const searchToggleBtn = document.getElementById('searchToggleBtn');
-            const processBtn = document.getElementById('processBtn');
-            const findDuplicatesBtn = document.getElementById('findDuplicatesBtn');
-            const searchPanel = document.getElementById('searchPanel');
-            const closeSearchBtn = document.getElementById('closeSearchBtn');
-            const findBtn = document.getElementById('findBtn');
-            const replaceBtn = document.getElementById('replaceBtn');
-            const deleteAllBtn = document.getElementById('deleteAllBtn'); // 全部删除按钮
-            const replaceAllBtn = document.getElementById('replaceAllBtn');
-            const fileInput = document.getElementById('fileInput');
-            const progressContainer = document.getElementById('progressContainer');
-            const progressFill = document.getElementById('progressFill');
-            const progressLabel = document.getElementById('progressLabel');
-            const cancelBtn = document.getElementById('cancelBtn');
-            const resultModal = document.getElementById('resultModal');
-            const closeModalBtn = document.getElementById('closeModalBtn');
-            const okBtn = document.getElementById('okBtn');
-            const successNotification = document.getElementById('successNotification');
-            const closeNotificationBtn = document.getElementById('closeNotificationBtn');
-            const notificationOkBtn = document.getElementById('notificationOkBtn');
-            const notificationMessage = document.getElementById('notificationMessage');
-            const presetPatternSelect = document.getElementById('presetPattern');
+            // DOM元素引用
+            const elements = {
+                textArea: document.getElementById('textArea'),
+                textHighlight: document.getElementById('textHighlight'),
+                openFileBtn: document.getElementById('openFileBtn'),
+                clearBtn: document.getElementById('clearBtn'),
+                searchToggleBtn: document.getElementById('searchToggleBtn'),
+                processBtn: document.getElementById('processBtn'),
+                findDuplicatesBtn: document.getElementById('findDuplicatesBtn'),
+                searchPanel: document.getElementById('searchPanel'),
+                closeSearchBtn: document.getElementById('closeSearchBtn'),
+                findBtn: document.getElementById('findBtn'),
+                replaceBtn: document.getElementById('replaceBtn'),
+                deleteAllBtn: document.getElementById('deleteAllBtn'),
+                replaceAllBtn: document.getElementById('replaceAllBtn'),
+                fileInput: document.getElementById('fileInput'),
+                progressContainer: document.getElementById('progressContainer'),
+                progressFill: document.getElementById('progressFill'),
+                progressLabel: document.getElementById('progressLabel'),
+                cancelBtn: document.getElementById('cancelBtn'),
+                resultModal: document.getElementById('resultModal'),
+                closeModalBtn: document.getElementById('closeModalBtn'),
+                okBtn: document.getElementById('okBtn'),
+                presetPatternSelect: document.getElementById('presetPattern'),
+                controls: document.getElementById('controls'),
+                tempMessage: document.getElementById('tempMessage')
+            };
             
             // 预设正则表达式模式
             const presetPatterns = {
@@ -800,87 +860,67 @@
                 "chinese-space": '(?<![\\r\\n 　\\t章节節回集卷文篇部])[ 　\\t]+(?![0-9a-zA-Z０-９Ａ-Ｚａ-ｚ 　\\t第])|(?<![\\r\\n0-9a-zA-Z０-９Ａ-Ｚａ-ｚ 　\\t章节節回集卷文篇部])[ 　\\t]+'
             };
             
-            // 当前文件信息
-            let currentFile = "无";
-            // 当前高亮状态
-            let highlightState = null;
-            // 当前查找位置
-            let currentFindIndex = 0;
+            // 当前状态
+            const state = {
+                currentFile: "无",
+                currentFileSize: 0,
+                currentFindIndex: 0
+            };
             
             // 初始化事件监听器
             function initEventListeners() {
-                // 文本区域输入时更新统计信息
-                textArea.addEventListener('input', updateStatistics);
+                elements.textArea.addEventListener('input', updateStatistics);
+                elements.openFileBtn.addEventListener('click', () => elements.fileInput.click());
+                elements.fileInput.addEventListener('change', handleFileSelect);
+                elements.clearBtn.addEventListener('click', clearInput);
+                elements.searchToggleBtn.addEventListener('click', toggleSearchPanel);
+                elements.closeSearchBtn.addEventListener('click', hideSearchPanel);
+                elements.processBtn.addEventListener('click', processText);
+                elements.findDuplicatesBtn.addEventListener('click', findDuplicates);
+                elements.findBtn.addEventListener('click', findText);
+                elements.replaceBtn.addEventListener('click', replaceText);
+                elements.deleteAllBtn.addEventListener('click', deleteAll);
+                elements.replaceAllBtn.addEventListener('click', replaceAll);
+                elements.cancelBtn.addEventListener('click', cancelLoading);
+                elements.closeModalBtn.addEventListener('click', closeResultModal);
+                elements.okBtn.addEventListener('click', closeResultModal);
+                elements.presetPatternSelect.addEventListener('change', handlePresetPatternChange);
                 
-                // 打开文件按钮
-                openFileBtn.addEventListener('click', () => fileInput.click());
-                
-                // 文件选择处理
-                fileInput.addEventListener('change', handleFileSelect);
-                
-                // 清空按钮
-                clearBtn.addEventListener('click', clearInput);
-                
-                // 显示/隐藏查找面板
-                searchToggleBtn.addEventListener('click', toggleSearchPanel);
-                
-                // 关闭查找面板
-                closeSearchBtn.addEventListener('click', hideSearchPanel);
-                
-                // 处理文本按钮
-                processBtn.addEventListener('click', processText);
-                
-                // 查找重复按钮
-                findDuplicatesBtn.addEventListener('click', findDuplicates);
-                
-                // 查找按钮
-                findBtn.addEventListener('click', findText);
-                
-                // 替换按钮
-                replaceBtn.addEventListener('click', replaceText);
-                
-                // 全部删除按钮
-                deleteAllBtn.addEventListener('click', deleteAll);
-                
-                // 全部替换按钮
-                replaceAllBtn.addEventListener('click', replaceAll);
-                
-                // 预设模式选择
-                presetPatternSelect.addEventListener('change', function() {
-                    const patternType = this.value;
-                    if (presetPatterns[patternType]) {
-                        document.getElementById('findInput').value = presetPatterns[patternType];
-                        document.getElementById('regexCheckbox').checked = true;
+                // 事件委托
+                document.addEventListener('click', function(e) {
+                    if (e.target.classList.contains('result-item')) {
+                        highlightSpecificWord(e.target.dataset.word);
                     }
                 });
-                
-                // 取消加载
-                cancelBtn.addEventListener('click', cancelLoading);
-                
-                // 关闭结果模态框
-                closeModalBtn.addEventListener('click', () => {
-                    resultModal.style.display = 'none';
-                    clearHighlights();
-                });
-                okBtn.addEventListener('click', () => {
-                    resultModal.style.display = 'none';
-                    clearHighlights();
-                });
-                
-                // 关闭通知
-                closeNotificationBtn.addEventListener('click', () => successNotification.style.display = 'none');
-                notificationOkBtn.addEventListener('click', () => successNotification.style.display = 'none');
             }
             
-            // 显示通知
-            function showNotification(message) {
-                notificationMessage.textContent = message;
-                successNotification.style.display = 'block';
+            // 显示临时消息
+            function showTempMessage(message, duration = 3000) {
+                elements.tempMessage.textContent = message;
+                elements.tempMessage.style.display = 'block';
+                setTimeout(() => {
+                    elements.tempMessage.style.display = 'none';
+                }, duration);
+            }
+            
+            // 关闭结果模态框
+            function closeResultModal() {
+                elements.resultModal.style.display = 'none';
+                clearHighlights();
+            }
+            
+            // 处理预设模式选择
+            function handlePresetPatternChange() {
+                const patternType = this.value;
+                if (presetPatterns[patternType]) {
+                    document.getElementById('findInput').value = presetPatterns[patternType];
+                    document.getElementById('regexCheckbox').checked = true;
+                }
             }
             
             // 更新文本统计信息
             function updateStatistics() {
-                const text = textArea.value;
+                const text = elements.textArea.value;
                 
                 // 总字数（不包括换行符）
                 const totalChars = text.replace(/\n|\r/g, '').length;
@@ -891,23 +931,19 @@
                 // 阿拉伯数字
                 const arabicNumbers = (text.match(/\d/g) || []).length;
                 
-                // 标点符号
-                const punctuation = (text.match(/[^\w\s\u4e00-\u9fff]/gu) || []).length;
-                
                 // 字母数
                 const letters = (text.match(/[a-zA-Z]/g) || []).length;
                 
                 // 段落数
                 const paragraphs = text.split('\n').filter(line => line.trim() !== '').length;
                 
-                // 更新状态栏
-                document.getElementById('totalChars').textContent = `总字数: ${totalChars}`;
-                document.getElementById('chineseChars').textContent = `中文字数: ${chineseChars}`;
-                document.getElementById('numbers').textContent = `阿拉伯数字: ${arabicNumbers}`;
-                document.getElementById('punctuation').textContent = `标点符号: ${punctuation}`;
-                document.getElementById('paragraphs').textContent = `段落数: ${paragraphs}`;
-                document.getElementById('letters').textContent = `字母数: ${letters}`;
-                document.getElementById('filename').textContent = `文件: ${currentFile}`;
+                // 更新统计栏
+                document.getElementById('totalChars').textContent = totalChars;
+                document.getElementById('chineseChars').textContent = chineseChars;
+                document.getElementById('numbers').textContent = arabicNumbers;
+                document.getElementById('letters').textContent = letters;
+                document.getElementById('paragraphs').textContent = paragraphs;
+                document.getElementById('duplicates').textContent = "0";
             }
             
             // 处理文件选择
@@ -915,29 +951,42 @@
                 const file = event.target.files[0];
                 if (!file) return;
                 
-                currentFile = file.name;
-                progressContainer.style.display = 'block';
-                progressLabel.textContent = "正在加载文件...";
-                progressFill.style.width = '0%';
+                state.currentFile = file.name;
+                state.currentFileSize = file.size;
+                elements.progressContainer.style.display = 'block';
+                elements.progressLabel.textContent = "正在加载文件...";
+                elements.progressFill.style.width = '0%';
                 
                 const reader = new FileReader();
                 
                 reader.onload = function(e) {
-                    textArea.value = e.target.result;
-                    progressContainer.style.display = 'none';
+                    elements.textArea.value = e.target.result;
+                    elements.progressContainer.style.display = 'none';
                     updateStatistics();
-                    showNotification(`文件加载成功!\n文件名: ${file.name}\n大小: ${formatFileSize(file.size)}`);
+                    updateStatusBar();
+                    showTempMessage(`文件加载成功: ${file.name}`);
                 };
                 
                 reader.onprogress = function(e) {
                     if (e.lengthComputable) {
                         const progress = Math.round((e.loaded / e.total) * 100);
-                        progressFill.style.width = `${progress}%`;
-                        progressLabel.textContent = `正在加载文件: ${progress}%`;
+                        elements.progressFill.style.width = `${progress}%`;
+                        elements.progressLabel.textContent = `正在加载文件: ${progress}%`;
                     }
                 };
                 
+                reader.onerror = function() {
+                    elements.progressContainer.style.display = 'none';
+                    showTempMessage("文件读取失败，请重试！");
+                };
+                
                 reader.readAsText(file);
+            }
+            
+            // 更新状态栏
+            function updateStatusBar() {
+                document.getElementById('filename').textContent = `文件: ${state.currentFile}`;
+                document.getElementById('fileSize').textContent = `大小: ${formatFileSize(state.currentFileSize)}`;
             }
             
             // 格式化文件大小
@@ -950,63 +999,85 @@
             
             // 清空输入
             function clearInput() {
-                textArea.value = '';
-                currentFile = "无";
+                elements.textArea.value = '';
+                state.currentFile = "无";
+                state.currentFileSize = 0;
                 updateStatistics();
+                updateStatusBar();
                 hideSearchPanel();
                 clearHighlights();
-                showNotification("文本内容已清空");
+                showTempMessage("文本内容已清空");
             }
             
             // 显示/隐藏查找面板
             function toggleSearchPanel() {
-                if (searchPanel.style.display === 'block') {
+    const controlGroups = document.querySelector('.control-groups');
+                if (elements.searchPanel.style.display === 'block') {
                     hideSearchPanel();
                 } else {
-                    searchPanel.style.display = 'block';
+                    elements.searchPanel.style.display = 'block';
+        controlGroups.style.display = 'none';
                     document.getElementById('findInput').focus();
                 }
             }
             
             function hideSearchPanel() {
-                searchPanel.style.display = 'none';
+                elements.searchPanel.style.display = 'none';
+    document.querySelector('.control-groups').style.display = 'flex';
                 document.getElementById('searchStatus').textContent = '';
             }
             
             // 取消加载
             function cancelLoading() {
-                progressContainer.style.display = 'none';
+                elements.progressContainer.style.display = 'none';
             }
             
             // 清除高亮
             function clearHighlights() {
-                textHighlight.innerHTML = '';
-                textHighlight.style.display = 'none';
+                elements.textHighlight.innerHTML = '';
+                elements.textHighlight.style.display = 'none';
             }
             
             // 处理文本
             function processText() {
-                let text = textArea.value;
+                let text = elements.textArea.value;
                 
                 if (!text.trim()) {
-                    showNotification("请输入文本内容！");
+                    showTempMessage("请输入文本内容！");
                     return;
                 }
                 
+                // 在符号处换行
+                
+// 句号、问号、感叹号、波浪号、冒号换行逻辑
+if (document.getElementById('wrapOnPeriod').checked) {
+    let originalText = text;
+
+    // 1. 避免 1. 2. 这种编号句号换行：(?<!\d)\.(?!\d)
+    text = text.replace(/(?<!\d)\.(?!\d)/g, '.\n');
+
+    // 2. 中文句号、问号、感叹号、波浪号换行
+    text = text.replace(/[。？！~]/g, '$&\n');
+
+    // 3. 冒号+空格换行（用于结构性文本）
+    text = text.replace(/: +/g, ':\n');
+
+    // 4. 如果出现 空格+数字+英文句号（如 “ 1.”），也换行
+    text = text.replace(/ (\d+\.)/g, '\n$1');
+
+    // 清理多余连续换行（例如 .\n\n1.）
+    text = text.replace(/\n{2,}/g, '\n');
+}
+
+
                 // 中文转换
                 const convertOption = document.querySelector('input[name="convert"]:checked').id;
                 if (convertOption === "convertSimplified") {
                     // 繁体转简体
-                    text = text.replace(/臺|臺/g, "台")
-                               .replace(/灣/g, "湾")
-                               .replace(/學/g, "学")
-                               .replace(/習/g, "习");
+                    text = convertText(text, conversionDict.toSimplified);
                 } else if (convertOption === "convertTraditional") {
                     // 简体转繁体
-                    text = text.replace(/台/g, "臺")
-                               .replace(/湾/g, "灣")
-                               .replace(/学/g, "學")
-                               .replace(/习/g, "習");
+                    text = convertText(text, conversionDict.toTraditional);
                 }
                 
                 // 大小写转换
@@ -1103,31 +1174,52 @@
                 }
                 
                 // 更新文本区域
-                textArea.value = text;
+                elements.textArea.value = text;
                 
                 // 更新统计信息
                 updateStatistics();
+                document.getElementById('lastAction').textContent = "文本处理完成";
                 
-                // 使用Clipboard API复制到剪贴板
-                navigator.clipboard.writeText(text)
-                    .then(() => {
-                        showNotification("文本处理完成！结果已复制到剪贴板。");
-                    })
-                    .catch(err => {
-                        console.error("复制失败: ", err);
-                        showNotification("处理完成！但复制到剪贴板失败，请手动复制。");
-                    });
+                // 自动复制到剪贴板
+                if (document.getElementById('autoCopy').checked) {
+                    navigator.clipboard.writeText(text)
+                        .then(() => {
+                            showTempMessage("文本处理完成！结果已复制到剪贴板。");
+                        })
+                        .catch(err => {
+                            console.error("复制失败: ", err);
+                            showTempMessage("处理完成！但复制到剪贴板失败，请手动复制。");
+                        });
+                } else {
+                    showTempMessage("文本处理完成！");
+                }
+            }
+            
+            // 中文简繁转换
+            function convertText(text, dict) {
+                // 优先替换多字词语
+                for (const [key, value] of Object.entries(dict)) {
+                    if (key.length > 1) {
+                        const regex = new RegExp(key, 'g');
+                        text = text.replace(regex, value);
+                    }
+                }
+                
+                // 替换单个字
+                return text.split('').map(char => {
+                    return dict[char] || char;
+                }).join('');
             }
             
             // 查找文本
             function findText() {
                 const findInput = document.getElementById('findInput').value;
                 if (!findInput) {
-                    showNotification("请输入查找内容！");
+                    showTempMessage("请输入查找内容！");
                     return;
                 }
                 
-                const text = textArea.value;
+                const text = elements.textArea.value;
                 const direction = document.getElementById('direction').value;
                 const useRegex = document.getElementById('regexCheckbox').checked;
                 const status = document.getElementById('searchStatus');
@@ -1138,7 +1230,7 @@
                 if (useRegex) {
                     try {
                         const regex = new RegExp(findInput, 'g');
-                        regex.lastIndex = currentFindIndex;
+                        regex.lastIndex = state.currentFindIndex;
                         let match = regex.exec(text);
                         
                         if (match) {
@@ -1146,21 +1238,21 @@
                             matchLength = match[0].length;
                             
                             // 更新当前查找位置
-                            currentFindIndex = foundIndex + matchLength;
+                            state.currentFindIndex = foundIndex + matchLength;
                             
                             // 选中文本
                             selectText(foundIndex, foundIndex + matchLength);
                             status.textContent = '';
                         } else {
                             // 如果没找到，重置查找位置
-                            currentFindIndex = 0;
-                            regex.lastIndex = currentFindIndex;
+                            state.currentFindIndex = 0;
+                            regex.lastIndex = state.currentFindIndex;
                             match = regex.exec(text);
                             
                             if (match) {
                                 foundIndex = match.index;
                                 matchLength = match[0].length;
-                                currentFindIndex = foundIndex + matchLength;
+                                state.currentFindIndex = foundIndex + matchLength;
                                 selectText(foundIndex, foundIndex + matchLength);
                                 status.textContent = "已到达文档末尾，从头开始搜索";
                             } else {
@@ -1172,21 +1264,21 @@
                     }
                 } else {
                     if (direction === 'down') {
-                        foundIndex = text.indexOf(findInput, currentFindIndex);
+                        foundIndex = text.indexOf(findInput, state.currentFindIndex);
                         
                         if (foundIndex !== -1) {
                             matchLength = findInput.length;
-                            currentFindIndex = foundIndex + matchLength;
+                            state.currentFindIndex = foundIndex + matchLength;
                             selectText(foundIndex, foundIndex + matchLength);
                             status.textContent = '';
                         } else {
                             // 从头开始搜索
-                            currentFindIndex = 0;
-                            foundIndex = text.indexOf(findInput, currentFindIndex);
+                            state.currentFindIndex = 0;
+                            foundIndex = text.indexOf(findInput, state.currentFindIndex);
                             
                             if (foundIndex !== -1) {
                                 matchLength = findInput.length;
-                                currentFindIndex = foundIndex + matchLength;
+                                state.currentFindIndex = foundIndex + matchLength;
                                 selectText(foundIndex, foundIndex + matchLength);
                                 status.textContent = "已到达文档末尾，从头开始搜索";
                             } else {
@@ -1195,12 +1287,12 @@
                         }
                     } else {
                         // 向上搜索
-                        const searchText = text.substring(0, currentFindIndex - 1);
+                        const searchText = text.substring(0, state.currentFindIndex - 1);
                         foundIndex = searchText.lastIndexOf(findInput);
                         
                         if (foundIndex !== -1) {
                             matchLength = findInput.length;
-                            currentFindIndex = foundIndex;
+                            state.currentFindIndex = foundIndex;
                             selectText(foundIndex, foundIndex + matchLength);
                             status.textContent = '';
                         } else {
@@ -1209,7 +1301,7 @@
                             
                             if (foundIndex !== -1) {
                                 matchLength = findInput.length;
-                                currentFindIndex = foundIndex;
+                                state.currentFindIndex = foundIndex;
                                 selectText(foundIndex, foundIndex + matchLength);
                                 status.textContent = "已到达文档开头，从末尾开始搜索";
                             } else {
@@ -1222,14 +1314,14 @@
             
             // 选中文本
             function selectText(start, end) {
-                textArea.focus();
-                textArea.selectionStart = start;
-                textArea.selectionEnd = end;
+                elements.textArea.focus();
+                elements.textArea.selectionStart = start;
+                elements.textArea.selectionEnd = end;
                 
                 // 滚动到选中位置
-                const lineHeight = parseInt(getComputedStyle(textArea).lineHeight);
-                const lines = textArea.value.substr(0, start).split('\n').length - 1;
-                textArea.scrollTop = lines * lineHeight;
+                const lineHeight = parseInt(getComputedStyle(elements.textArea).lineHeight);
+                const lines = elements.textArea.value.substr(0, start).split('\n').length - 1;
+                elements.textArea.scrollTop = lines * lineHeight;
             }
             
             // 替换文本
@@ -1238,25 +1330,25 @@
                 const replaceInput = document.getElementById('replaceInput').value;
                 
                 if (!findInput) {
-                    showNotification("请输入查找内容！");
+                    showTempMessage("请输入查找内容！");
                     return;
                 }
                 
-                const selectedText = textArea.value.substring(textArea.selectionStart, textArea.selectionEnd);
+                const selectedText = elements.textArea.value.substring(elements.textArea.selectionStart, elements.textArea.selectionEnd);
                 const useRegex = document.getElementById('regexCheckbox').checked;
                 
                 if (selectedText === findInput || (useRegex && new RegExp(findInput).test(selectedText))) {
-                    const start = textArea.selectionStart;
-                    const end = textArea.selectionEnd;
+                    const start = elements.textArea.selectionStart;
+                    const end = elements.textArea.selectionEnd;
                     
                     // 替换选中的文本
-                    const before = textArea.value.substring(0, start);
-                    const after = textArea.value.substring(end);
-                    textArea.value = before + replaceInput + after;
+                    const before = elements.textArea.value.substring(0, start);
+                    const after = elements.textArea.value.substring(end);
+                    elements.textArea.value = before + replaceInput + after;
                     
                     // 更新文本区域后重新设置光标位置
-                    textArea.selectionStart = start + replaceInput.length;
-                    textArea.selectionEnd = start + replaceInput.length;
+                    elements.textArea.selectionStart = start + replaceInput.length;
+                    elements.textArea.selectionEnd = start + replaceInput.length;
                     
                     // 更新统计
                     updateStatistics();
@@ -1269,16 +1361,16 @@
                 }
             }
             
-            // 全部删除功能（新功能）
+            // 全部删除功能
             function deleteAll() {
                 const findInput = document.getElementById('findInput').value;
                 if (!findInput) {
-                    showNotification("请输入要删除的内容！");
+                    showTempMessage("请输入要删除的内容！");
                     return;
                 }
                 
                 const useRegex = document.getElementById('regexCheckbox').checked;
-                let text = textArea.value;
+                let text = elements.textArea.value;
                 let count = 0;
                 
                 if (useRegex) {
@@ -1298,9 +1390,10 @@
                     text = text.replace(regex, '');
                 }
                 
-                textArea.value = text;
+                elements.textArea.value = text;
                 updateStatistics();
                 document.getElementById('searchStatus').textContent = `已删除 ${count} 处匹配内容！`;
+                document.getElementById('lastAction').textContent = `删除 ${count} 处匹配内容`;
             }
             
             // 全部替换
@@ -1309,12 +1402,12 @@
                 const replaceInput = document.getElementById('replaceInput').value;
                 
                 if (!findInput) {
-                    showNotification("请输入查找内容！");
+                    showTempMessage("请输入查找内容！");
                     return;
                 }
                 
                 const useRegex = document.getElementById('regexCheckbox').checked;
-                let text = textArea.value;
+                let text = elements.textArea.value;
                 let count = 0;
                 
                 if (useRegex) {
@@ -1333,9 +1426,10 @@
                     text = text.replace(new RegExp(escapeRegExp(findInput), 'g'), replaceInput);
                 }
                 
-                textArea.value = text;
+                elements.textArea.value = text;
                 updateStatistics();
                 document.getElementById('searchStatus').textContent = `已替换 ${count} 处匹配内容！`;
+                document.getElementById('lastAction').textContent = `替换 ${count} 处匹配内容`;
             }
             
             // 转义正则特殊字符
@@ -1345,168 +1439,122 @@
             
             // 查找重复项
             function findDuplicates() {
-                const text = textArea.value;
+                const text = elements.textArea.value;
                 if (!text.trim()) {
-                    showNotification("请输入文本内容！");
+                    showTempMessage("请输入文本内容！");
                     return;
                 }
                 
-                // 保存原始文本（用于后续高亮）
+                // 清除高亮
                 clearHighlights();
                 
                 // 显示进度条
-                progressContainer.style.display = 'block';
-                progressLabel.textContent = "正在查找重复内容...";
-                progressFill.style.width = '0%';
+                elements.progressContainer.style.display = 'block';
+                elements.progressLabel.textContent = "正在查找重复内容...";
+                elements.progressFill.style.width = '0%';
                 
-                // 模拟处理过程
-                let progress = 0;
-                const interval = setInterval(() => {
-                    progress += 5;
-                    progressFill.style.width = `${progress}%`;
-                    if (progress >= 100) {
-                        clearInterval(interval);
-                        progressContainer.style.display = 'none';
-                        showDuplicateResults(text);
-                    }
+                // 使用真实进度计算
+                setTimeout(() => {
+
+const words = text.match(/[\w\u4e00-\u9fff]+/g) || [];    
+                const wordCount = {};
+                    
+                    words.forEach(word => {
+                        const normalized = word.toLowerCase();
+                        if (normalized.length > 1) {
+                            wordCount[normalized] = (wordCount[normalized] || 0) + 1;
+                        }
+                    });
+                    
+                    const duplicates = Object.entries(wordCount)
+                        .filter(([word, count]) => count > 1)
+                        .sort((a, b) => b[1] - a[1]);
+                    
+                    showDuplicateResults(text, duplicates);
                 }, 100);
             }
+
+
             
             // 显示重复项结果
-            function showDuplicateResults(text) {
-                // 检测重复的英文单词
-                const englishWords = text.match(/\b\w+\b/g) || [];
-                const wordCount = {};
-                englishWords.forEach(word => {
-                    const wordLower = word.toLowerCase();
-                    if (/[a-zA-Z]/.test(word)) { // 只统计包含字母的单词
-                        wordCount[wordLower] = (wordCount[wordLower] || 0) + 1;
-                    }
-                });
+            function showDuplicateResults(text, duplicates) {
+                elements.progressFill.style.width = '100%';
                 
-                const duplicateWords = Object.entries(wordCount)
-                    .filter(([word, count]) => count > 1)
-                    .sort((a, b) => b[1] - a[1]);
-                
-                // 检测重复的中文词语（2-4字）
-                const chineseWords = text.match(/[\u4e00-\u9fff]{2,4}/g) || [];
-                const wordCountCN = {};
-                chineseWords.forEach(word => {
-                    wordCountCN[word] = (wordCountCN[word] || 0) + 1;
-                });
-                
-                const duplicateChinese = Object.entries(wordCountCN)
-                    .filter(([word, count]) => count > 1)
-                    .sort((a, b) => b[1] - a[1]);
-                
-                // 构建结果HTML
-                let resultHTML = '<div class="result-section">';
-                
-                if (duplicateWords.length > 0) {
-                    resultHTML += '<h4>重复的英文单词:</h4><ul>';
-                    duplicateWords.forEach(([word, count]) => {
-                        resultHTML += `
-                            <li class="result-item" data-word="${word}">
-                                <strong>${word}</strong>: ${count} 次
-                            </li>
-                        `;
-                    });
-                    resultHTML += '</ul>';
-                }
-                
-                if (duplicateChinese.length > 0) {
-                    resultHTML += '<h4>重复的中文词语:</h4><ul>';
-                    duplicateChinese.forEach(([word, count]) => {
-                        resultHTML += `
-                            <li class="result-item" data-word="${word}">
-                                <strong>${word}</strong>: ${count} 次
-                            </li>
-                        `;
-                    });
-                    resultHTML += '</ul>';
-                }
-                
-                if (duplicateWords.length === 0 && duplicateChinese.length === 0) {
-                    resultHTML += '<p>未发现重复的英文单词或中文词语！</p>';
-                } else {
-                    const totalTypes = duplicateWords.length + duplicateChinese.length;
-                    const totalInstances = duplicateWords.reduce((sum, [, count]) => sum + count, 0) +
-                                           duplicateChinese.reduce((sum, [, count]) => sum + count, 0) - totalTypes;
-                    resultHTML += `<p class="summary">总计发现 ${totalTypes} 种重复内容，共 ${totalInstances} 处重复。</p>`;
+                setTimeout(() => {
+                    elements.progressContainer.style.display = 'none';
                     
-                    // 高亮显示重复内容
-                    highlightDuplicates(text, duplicateWords, duplicateChinese);
-                }
-                
-                resultHTML += '</div>';
-                
-                // 更新并显示结果模态框
-                document.getElementById('resultContent').innerHTML = resultHTML;
-                resultModal.style.display = 'flex';
-                
-                // 添加点击事件
-                document.querySelectorAll('.result-item').forEach(item => {
-                    item.addEventListener('click', function() {
-                        const word = this.dataset.word;
-                        highlightSpecificWord(word);
-                    });
-                });
-                
-                // 更新重复项计数
-                const duplicateCount = duplicateWords.length + duplicateChinese.length;
-                document.getElementById('duplicates').textContent = `重复项: ${duplicateCount}`;
+                    let resultHTML = '<div class="result-section">';
+                    
+                    if (duplicates.length > 0) {
+                        resultHTML += '<h4>重复内容:</h4><ul>';
+                        duplicates.forEach(([word, count]) => {
+                            resultHTML += `
+                                <li class="result-item" data-word="${word}">
+                                    <strong>${word}</strong>: ${count} 次
+                                </li>
+                            `;
+                        });
+                        resultHTML += '</ul>';
+                        
+                        const totalInstances = duplicates.reduce((sum, [, count]) => sum + count, 0) - duplicates.length;
+                        resultHTML += `<p class="summary">总计发现 ${duplicates.length} 种重复内容，共 ${totalInstances} 处重复。</p>`;
+                        
+                        // 高亮显示重复内容
+                        highlightDuplicates(text, duplicates);
+                    } else {
+                        resultHTML += '<p>未发现重复内容！</p>';
+                    }
+                    
+                    resultHTML += '</div>';
+                    
+                    // 更新并显示结果模态框
+                    document.getElementById('resultContent').innerHTML = resultHTML;
+                    elements.resultModal.style.display = 'flex';
+                    
+                    // 更新重复项计数
+                    document.getElementById('duplicates').textContent = duplicates.length;
+                }, 300);
             }
             
             // 高亮显示所有重复项
-            function highlightDuplicates(text, duplicateWords, duplicateChinese) {
+            function highlightDuplicates(text, duplicates) {
                 let highlightedText = text;
                 
-                // 高亮英文重复词
-                duplicateWords.forEach(([word]) => {
+                // 高亮所有重复词
+                duplicates.forEach(([word]) => {
                     const regex = new RegExp(`\\b${word}\\b`, 'gi');
                     highlightedText = highlightedText.replace(regex, 
                         `<span class="duplicate">$&</span>`);
                 });
                 
-                // 高亮中文重复词
-                duplicateChinese.forEach(([word]) => {
-                    highlightedText = highlightedText.replace(new RegExp(word, 'g'), 
-                        `<span class="duplicate">${word}</span>`);
-                });
-                
                 // 显示高亮文本
-                textHighlight.innerHTML = highlightedText;
-                textHighlight.style.display = 'block';
+                elements.textHighlight.innerHTML = highlightedText;
+                elements.textHighlight.style.display = 'block';
             }
             
             // 高亮特定单词
             function highlightSpecificWord(word) {
-                let highlightedText = textArea.value;
+                let highlightedText = elements.textArea.value;
                 
                 // 清除现有高亮
-                textHighlight.innerHTML = '';
+                elements.textHighlight.innerHTML = '';
                 
                 // 高亮特定单词
-                if (/[a-zA-Z]/.test(word)) {
-                    const regex = new RegExp(`\\b${word}\\b`, 'gi');
-                    highlightedText = highlightedText.replace(regex, 
-                        `<span class="duplicate">$&</span>`);
-                } else {
-                    highlightedText = highlightedText.replace(new RegExp(word, 'g'), 
-                        `<span class="duplicate">${word}</span>`);
-                }
+                const regex = new RegExp(`\\b${word}\\b`, 'gi');
+                highlightedText = highlightedText.replace(regex, 
+                    `<span class="duplicate">$&</span>`);
                 
                 // 显示高亮文本
-                textHighlight.innerHTML = highlightedText;
-                textHighlight.style.display = 'block';
+                elements.textHighlight.innerHTML = highlightedText;
+                elements.textHighlight.style.display = 'block';
                 
                 // 滚动到第一个匹配项
-                const firstIndex = textArea.value.indexOf(word);
+                const firstIndex = elements.textArea.value.toLowerCase().indexOf(word.toLowerCase());
                 if (firstIndex !== -1) {
-                    const lineHeight = parseInt(getComputedStyle(textArea).lineHeight);
-                    const lines = textArea.value.substr(0, firstIndex).split('\n').length - 1;
-                    textArea.scrollTop = lines * lineHeight;
-                    textHighlight.scrollTop = lines * lineHeight;
+                    const lineHeight = parseInt(getComputedStyle(elements.textArea).lineHeight);
+                    const lines = elements.textArea.value.substr(0, firstIndex).split('\n').length - 1;
+                    elements.textArea.scrollTop = lines * lineHeight;
+                    elements.textHighlight.scrollTop = lines * lineHeight;
                 }
             }
             
@@ -1514,25 +1562,39 @@
             initEventListeners();
             updateStatistics();
             
-            // 添加示例文本（包含两个hello和两个拔苗助长）
-            textArea.value = `hello 你好，这是一个测试文本。
+            // 添加示例文本
+            elements.textArea.value = `欢迎使用删除多余文本工具！
+
+这个工具可以帮助您：
+1. 删除多余的空格、空行、数字和符号
+2. 转换中文简繁体
+3. 调整文本大小写
+4. 格式化文本排版
+5. 查找并删除重复内容
+
+示例文本：
+这  里  有  多  余  的  空  格。
+另  一  行  也  有  空  格  问  题。
+
+重复内容示例：
+hello 你好，这是一个测试文本。
 hello 世界！这里有两个相同的英文单词 hello。
 成语测试：拔苗助长是一个成语，拔苗助长这个成语告诉我们不要急于求成。
 这里还有另一个重复的词语：测试测试。
 
-中文间多余空格示例：这  里  有  很  多  多  余  的  空  格。
-另  一  个  空  格  示  例。
+简繁体转换测试：
+繁体字：臺灣學生學習繁體中文
+简体字：台湾学生学习简体中文
 
-请尝试使用"查找重复"功能，它会找到：
-- 两个 "hello"
-- 两个 "拔苗助长"
-- 两个 "测试"
-
-使用"中文间多余空格"预设模式可以找到多余的空格。
-
-祝您使用愉快！`;
+请尝试使用各种功能来优化您的文本内容！`;
             updateStatistics();
         });
     </script>
 </body>
 </html>
+<style>
+.search-buttons > div {
+    display: flex;
+    gap: 10px;
+}
+</style>
