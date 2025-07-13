@@ -30,17 +30,18 @@
         }
         
         body {
-            /* 背景设置：添加bg.jpg作为背景图片 */
-            background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('bg.jpg') no-repeat center center fixed;
+            background: url('bg.jpg') no-repeat center center fixed;
             background-size: cover;
-            color: #fff;
             min-height: 100vh;
             padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
         
         .container {
             max-width: 1200px;
-            margin: 0 auto;
+            width: 100%;
         }
         
         .app-card {
@@ -93,6 +94,7 @@
             overflow-wrap: break-word;
             z-index: 10;
             background: white;
+            color: #333;
         }
         
         .text-area:focus {
@@ -120,6 +122,7 @@
             border-radius: 8px;
             border: 1px solid transparent;
             margin-top: 10px;
+            color: #333;
         }
         
         .controls {
@@ -127,6 +130,7 @@
             background: #f8f9fa;
             border-top: 1px solid #eee;
             border-bottom: 1px solid #eee;
+            color: #333;
         }
         
         .control-group {
@@ -152,6 +156,7 @@
             display: flex;
             align-items: center;
             gap: 5px;
+            color: #333;
         }
         
         .btn-row {
@@ -230,6 +235,7 @@
             border-radius: 8px;
             margin-top: 15px;
             display: none;
+            color: #333;
         }
         
         .search-row {
@@ -257,6 +263,8 @@
             border: 1px solid #ddd;
             border-radius: 4px;
             font-size: 14px;
+            background: white;
+            color: #333;
         }
         
         .search-input:focus {
@@ -284,6 +292,7 @@
             display: flex;
             justify-content: space-between;
             margin-bottom: 10px;
+            color: #333;
         }
         
         .progress-bar {
@@ -371,6 +380,7 @@
             overflow: auto;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
             position: relative;
+            color: #333;
         }
         
         .modal-header {
@@ -426,6 +436,7 @@
             display: none;
             max-width: 400px;
             text-align: center;
+            color: #333;
         }
         
         .notification-content {
@@ -461,6 +472,15 @@
             padding: 5px;
             border-radius: 3px;
             font-size: 14px;
+        }
+        
+        .search-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 20px;
+            justify-content: space-between;
+            width: 100%;
         }
     </style>
 </head>
@@ -649,17 +669,22 @@
                                 <input type="checkbox" id="regexCheckbox">
                                 <label for="regexCheckbox">正则表达式</label>
                             </div>
-                            
-                            <div class="btn-row" style="margin-top: 20px; margin-left: auto;">
+                        </div>
+                        
+                        <div class="search-buttons">
+                            <div>
                                 <button class="btn btn-outline" id="findBtn">
                                     <i class="fas fa-search"></i>查找
                                 </button>
                                 <button class="btn btn-outline" id="replaceBtn">
                                     <i class="fas fa-exchange-alt"></i>替换
                                 </button>
-                                <!-- 添加删除按钮 -->
-                                <button class="btn btn-danger" id="deleteBtn">
-                                    <i class="fas fa-trash-alt"></i>删除
+                            </div>
+                            
+                            <div>
+                                <!-- 修改为全部删除按钮 -->
+                                <button class="btn btn-danger" id="deleteAllBtn">
+                                    <i class="fas fa-trash-alt"></i>全部删除
                                 </button>
                                 <button class="btn btn-primary" id="replaceAllBtn">
                                     <i class="fas fa-sync-alt"></i>全部替换
@@ -749,7 +774,7 @@
             const closeSearchBtn = document.getElementById('closeSearchBtn');
             const findBtn = document.getElementById('findBtn');
             const replaceBtn = document.getElementById('replaceBtn');
-            const deleteBtn = document.getElementById('deleteBtn'); // 新增删除按钮
+            const deleteAllBtn = document.getElementById('deleteAllBtn'); // 全部删除按钮
             const replaceAllBtn = document.getElementById('replaceAllBtn');
             const fileInput = document.getElementById('fileInput');
             const progressContainer = document.getElementById('progressContainer');
@@ -814,8 +839,8 @@
                 // 替换按钮
                 replaceBtn.addEventListener('click', replaceText);
                 
-                // 删除按钮（新增）
-                deleteBtn.addEventListener('click', deleteText);
+                // 全部删除按钮
+                deleteAllBtn.addEventListener('click', deleteAll);
                 
                 // 全部替换按钮
                 replaceAllBtn.addEventListener('click', replaceAll);
@@ -1244,40 +1269,38 @@
                 }
             }
             
-            // 删除文本（新增功能）
-            function deleteText() {
+            // 全部删除功能（新功能）
+            function deleteAll() {
                 const findInput = document.getElementById('findInput').value;
                 if (!findInput) {
                     showNotification("请输入要删除的内容！");
                     return;
                 }
                 
-                const selectedText = textArea.value.substring(textArea.selectionStart, textArea.selectionEnd);
                 const useRegex = document.getElementById('regexCheckbox').checked;
+                let text = textArea.value;
+                let count = 0;
                 
-                if (selectedText === findInput || (useRegex && new RegExp(findInput).test(selectedText))) {
-                    const start = textArea.selectionStart;
-                    const end = textArea.selectionEnd;
-                    
-                    // 删除选中的文本
-                    const before = textArea.value.substring(0, start);
-                    const after = textArea.value.substring(end);
-                    textArea.value = before + after;
-                    
-                    // 更新文本区域后重新设置光标位置
-                    textArea.selectionStart = start;
-                    textArea.selectionEnd = start;
-                    
-                    // 更新统计
-                    updateStatistics();
-                    
-                    // 查找下一个
-                    findText();
-                    document.getElementById('searchStatus').textContent = "已删除所选内容";
+                if (useRegex) {
+                    try {
+                        const regex = new RegExp(findInput, 'g');
+                        text = text.replace(regex, () => {
+                            count++;
+                            return ''; // 替换为空字符串
+                        });
+                    } catch (e) {
+                        document.getElementById('searchStatus').textContent = `正则表达式错误: ${e.message}`;
+                        return;
+                    }
                 } else {
-                    // 查找下一个
-                    findText();
+                    const regex = new RegExp(escapeRegExp(findInput), 'g');
+                    count = (text.match(regex) || []).length;
+                    text = text.replace(regex, '');
                 }
+                
+                textArea.value = text;
+                updateStatistics();
+                document.getElementById('searchStatus').textContent = `已删除 ${count} 处匹配内容！`;
             }
             
             // 全部替换
