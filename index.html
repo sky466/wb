@@ -576,10 +576,10 @@
                                     <input type="checkbox" id="wrapOnSpace">
                                     <label for="wrapOnSpace">空格换行</label>
                                 </div>
-<div class="option-item">
-    <input type="checkbox" id="wrapOnPeriod">
-    <label for="wrapOnPeriod">句号换行</label>
-</div>
+                                <div class="option-item">
+                                    <input type="checkbox" id="wrapOnPeriod">
+                                    <label for="wrapOnPeriod">句号换行</label>
+                                </div>
                                 <div class="option-item">
                                     <input type="checkbox" id="removeLetters">
                                     <label for="removeLetters">删除字母</label>
@@ -650,26 +650,46 @@
                                 <i class="fas fa-align-left"></i>
                                 <span>排版设置</span>
                             </div>
-                            <div class="options-row">
+                            <div class="options-row" style="flex-direction: column; align-items: flex-start;">
+                                <!-- Indent Type -->
                                 <div class="option-item">
-                                    <label for="indent">缩进：</label>
-                                    <select id="indent">
-                                        <option value="0">0 空格</option>
-                                        <option value="1">1 空格</option>
-                                        <option value="2">2 空格</option>
-                                        <option value="4">4 空格</option>
-                                        <option value="8">8 空格</option>
-                                    </select>
+                                    <span>缩进类型：</span>
+                                    <div class="options-row">
+                                        <div class="option-item">
+                                            <input type="radio" name="indentType" id="indentNone" value="none" checked>
+                                            <label for="indentNone">不缩进</label>
+                                        </div>
+                                        <div class="option-item">
+                                            <input type="radio" name="indentType" id="indentLine" value="line">
+                                            <label for="indentLine">段落缩进</label>
+                                        </div>
+                                        <div class="option-item">
+                                            <input type="radio" name="indentType" id="indentParagraph" value="paragraph">
+                                            <label for="indentParagraph">行缩进</label>
+                                        </div>
+                                    </div>
                                 </div>
-                                
-                                <div class="option-item">
-                                    <label for="align">对齐：</label>
-                                    <select id="align">
-                                        <option value="left">左对齐</option>
-                                        <option value="right">右对齐</option>
-                                        <option value="center">居中</option>
-                                        <option value="justify">两端对齐</option>
-                                    </select>
+                                <!-- Indent Size and Align -->
+                                <div class="options-row">
+                                    <div class="option-item">
+                                        <label for="indentSize">缩进空格数：</label>
+                                        <select id="indentSize">
+                                            <option value="0">0 空格</option>
+                                            <option value="1">1 空格</option>
+                                            <option value="2">2 空格</option>
+                                            <option value="4">4 空格</option>
+                                            <option value="8">8 空格</option>
+                                        </select>
+                                    </div>
+                                    <div class="option-item">
+                                        <label for="align">对齐：</label>
+                                        <select id="align">
+                                            <option value="left">左对齐</option>
+                                            <option value="right">右对齐</option>
+                                            <option value="center">居中</option>
+                                            <option value="justify">两端对齐</option>
+                                        </select>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -770,7 +790,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h3>查找重复结果</h3>
-                <button class="close-btn" id="closeModalBtn">&times;</button>
+                <button class="close-btn" id="closeModalBtn">×</button>
             </div>
             <div class="modal-body">
                 <div id="resultContent"></div>
@@ -1013,19 +1033,19 @@
             
             // 显示/隐藏查找面板
             function toggleSearchPanel() {
-    const controlGroups = document.querySelector('.control-groups');
+                const controlGroups = document.querySelector('.control-groups');
                 if (elements.searchPanel.style.display === 'block') {
                     hideSearchPanel();
                 } else {
                     elements.searchPanel.style.display = 'block';
-        controlGroups.style.display = 'none';
+                    controlGroups.style.display = 'none';
                     document.getElementById('findInput').focus();
                 }
             }
             
             function hideSearchPanel() {
                 elements.searchPanel.style.display = 'none';
-    document.querySelector('.control-groups').style.display = 'flex';
+                document.querySelector('.control-groups').style.display = 'flex';
                 document.getElementById('searchStatus').textContent = '';
             }
             
@@ -1049,36 +1069,21 @@
                     return;
                 }
                 
-                // 在符号处换行
-                
-// 句号、问号、感叹号、波浪号、冒号换行逻辑
-if (document.getElementById('wrapOnPeriod').checked) {
-    let originalText = text;
-
-    // 1. 避免 1. 2. 这种编号句号换行：(?<!\d)\.(?!\d)
-    text = text.replace(/(?<!\d)\.(?!\d)/g, '.\n');
-
-    // 2. 中文句号、问号、感叹号、波浪号换行
-    text = text.replace(/[。？！~]/g, '$&\n');
-
-    // 3. 冒号+空格换行（用于结构性文本）
-    text = text.replace(/: +/g, ':\n');
-
-    // 4. 如果出现 空格+数字+英文句号（如 “ 1.”），也换行
-    text = text.replace(/ (\d+\.)/g, '\n$1');
-
-    // 清理多余连续换行（例如 .\n\n1.）
-    text = text.replace(/\n{2,}/g, '\n');
-}
-
+                // 句号、问号、感叹号、波浪号、冒号换行逻辑
+                if (document.getElementById('wrapOnPeriod').checked) {
+                    let originalText = text;
+                    text = text.replace(/(?<!\d)\.(?!\d)/g, '.\n');
+                    text = text.replace(/[。？！~]/g, '$&\n');
+                    text = text.replace(/: +/g, ':\n');
+                    text = text.replace(/ (\d+\.)/g, '\n$1');
+                    text = text.replace(/\n{2,}/g, '\n');
+                }
 
                 // 中文转换
                 const convertOption = document.querySelector('input[name="convert"]:checked').id;
                 if (convertOption === "convertSimplified") {
-                    // 繁体转简体
                     text = convertText(text, conversionDict.toSimplified);
                 } else if (convertOption === "convertTraditional") {
-                    // 简体转繁体
                     text = convertText(text, conversionDict.toTraditional);
                 }
                 
@@ -1089,7 +1094,6 @@ if (document.getElementById('wrapOnPeriod').checked) {
                 } else if (caseOption === "caseLower") {
                     text = text.toLowerCase();
                 } else if (caseOption === "caseCapitalize") {
-                    // 首字母大写
                     text = text.split(/(?<=[.!?])\s+/).map(sentence => {
                         return sentence.charAt(0).toUpperCase() + sentence.slice(1);
                     }).join(' ');
@@ -1132,48 +1136,80 @@ if (document.getElementById('wrapOnPeriod').checked) {
                     text = text.replace(/\n\s*$/, '\n');
                     text = text.replace(/\n{3,}/g, '\n\n');
                 }
-                
-                // 段首缩进
-                const indentSize = parseInt(document.getElementById('indent').value);
-                if (indentSize > 0) {
-                    const indent = ' '.repeat(indentSize);
-                    text = text.split('\n').map(line => {
-                        return line.trim() ? indent + line.trim() : '';
-                    }).join('\n');
-                }
-                
-                // 文本对齐
+
+                // --- 排版设置（缩进和对齐）---
+                const indentType = document.querySelector('input[name="indentType"]:checked').value;
+                const indentSize = parseInt(document.getElementById('indentSize').value, 10);
                 const alignOption = document.getElementById('align').value;
-                if (alignOption !== 'left') {
-                    const lines = text.split('\n');
-                    const maxLength = Math.max(...lines.map(line => line.length));
-                    
-                    if (alignOption === 'right') {
-                        text = lines.map(line => line.padStart(maxLength)).join('\n');
-                    } else if (alignOption === 'center') {
-                        text = lines.map(line => {
-                            const padding = Math.floor((maxLength - line.length) / 2);
-                            return ' '.repeat(padding) + line;
-                        }).join('\n');
-                    } else if (alignOption === 'justify') {
-                        text = lines.map(line => {
-                            const words = line.split(' ');
-                            if (words.length < 2) return line;
-                            
-                            const spacesToAdd = maxLength - line.replace(/\s+/g, '').length;
-                            const spaceSlots = words.length - 1;
-                            const spacesPerSlot = Math.floor(spacesToAdd / spaceSlots);
-                            const extraSpaces = spacesToAdd % spaceSlots;
-                            
-                            let result = words[0];
-                            for (let i = 1; i < words.length; i++) {
-                                const spaces = ' '.repeat(spacesPerSlot + (i <= extraSpaces ? 1 : 0));
-                                result += spaces + words[i];
+
+                // 步骤 1: 根据缩进类型处理文本行
+                let lines = text.split('\n');
+                
+                if (indentType === 'none' || indentSize === 0) {
+                    // 不缩进或0空格：移除所有行首空格
+                    lines = lines.map(line => line.trimStart());
+                } else if (indentType === 'line') {
+                    // 行缩进：为每行（非空）添加缩进
+                    const indent = ' '.repeat(indentSize);
+                    lines = lines.map(line => line.trim() ? indent + line.trim() : '');
+                } else if (indentType === 'paragraph') {
+                    // 段落缩进：只为段落首行添加缩进
+                    const indent = ' '.repeat(indentSize);
+                    let inParagraph = false;
+                    lines = lines.map(line => {
+                        const trimmedLine = line.trim();
+                        if (trimmedLine) {
+                            if (!inParagraph) {
+                                inParagraph = true;
+                                return indent + trimmedLine;
                             }
-                            return result;
-                        }).join('\n');
-                    }
+                            return trimmedLine;
+                        } else {
+                            inParagraph = false;
+                            return '';
+                        }
+                    });
                 }
+                
+                // 步骤 2: 应用对齐方式
+                const maxLength = Math.max(...lines.map(line => line.length));
+
+                if (alignOption === 'right') {
+                    lines = lines.map(line => line.padStart(maxLength, ' '));
+                } else if (alignOption === 'center') {
+                    lines = lines.map(line => {
+                        if (!line.trim()) return '';
+                        const padding = ' '.repeat(Math.floor((maxLength - line.length) / 2));
+                        return padding + line;
+                    });
+                } else if (alignOption === 'justify') {
+                    lines = lines.map((line, index) => {
+                        // 不处理最后一行或单行段落
+                        if (index === lines.length - 1 || !lines[index + 1].trim()) {
+                            return line;
+                        }
+                        const words = line.split(' ').filter(w => w);
+                        if (words.length < 2) return line;
+                        
+                        const spacesToAdd = maxLength - line.replace(/\s+/g, '').length;
+                        const spaceSlots = words.length - 1;
+                        if (spaceSlots <= 0) return line;
+
+                        const spacesPerSlot = Math.floor(spacesToAdd / spaceSlots);
+                        let extraSpaces = spacesToAdd % spaceSlots;
+                        
+                        let result = words[0];
+                        for (let i = 1; i < words.length; i++) {
+                            const spaces = ' '.repeat(spacesPerSlot + (i <= extraSpaces ? 1 : 0));
+                            result += spaces + words[i];
+                        }
+                        return result;
+                    });
+                }
+                // 对于 'left' 对齐，在步骤1中已通过 trim 或重新构建行来完成，无需额外操作。
+                
+                text = lines.join('\n');
+                // --- 排版设置结束 ---
                 
                 // 更新文本区域
                 elements.textArea.value = text;
@@ -1458,8 +1494,8 @@ if (document.getElementById('wrapOnPeriod').checked) {
                 // 使用真实进度计算
                 setTimeout(() => {
 
-const words = text.match(/[\w\u4e00-\u9fff]+/g) || [];    
-                const wordCount = {};
+                    const words = text.match(/[\w\u4e00-\u9fff]+/g) || [];    
+                    const wordCount = {};
                     
                     words.forEach(word => {
                         const normalized = word.toLowerCase();
