@@ -24,6 +24,9 @@
         });
     </script>
     <!-- ↑↑↑ --- 新增的故障恢复逻辑 --- ↑↑↑ -->
+    
+    <!-- ★★★ 新增：引入 Mammoth.js 用于解析 Word 文档 ★★★ -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.7.1/mammoth.browser.min.js"></script>
 
     <!-- 我们将“保险丝”安装在这个最容易出问题的外部资源上 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" onerror="loadFallbackGame()">
@@ -362,8 +365,9 @@
                 <div class="controls">
                     <!-- 顶部按钮行 -->
                     <div class="top-buttons">
+                        <!-- ★★★ 修改：按钮文本，更清晰地指示支持的格式 ★★★ -->
                         <button class="btn btn-primary" id="openFileBtn">
-                            <i class="fas fa-folder-open"></i>打开 TXT
+                            <i class="fas fa-folder-open"></i>打开 TXT / DOCX
                         </button>
                         <button class="btn btn-outline" id="clearBtn">
                             <i class="fas fa-trash-alt"></i>清空
@@ -511,7 +515,8 @@
     
     <div class="temp-message" id="tempMessage"></div>
     
-    <input type="file" id="fileInput" style="display: none;" accept=".txt">
+    <!-- ★★★ 修改：文件类型选择器，不再接受 .doc 文件 ★★★ -->
+    <input type="file" id="fileInput" style="display: none;" accept=".txt,.docx,application/vnd.openxmlformats-officedocument.wordprocessingml.document">
     
     <script>
         const conversionDict = {
@@ -592,11 +597,23 @@
                 document.getElementById('letters').textContent = (text.match(/[a-zA-Z]/g) || []).length;
                 document.getElementById('paragraphs').textContent = text.split('\n').filter(line => line.trim() !== '').length;
             }
-            
+
+            // ★★★ --- START OF FIXED AND REFACTORED CODE --- ★★★
+            // 提取出的通用函数，用于完成文件加载后的收尾工作
+            function finalizeFileLoad(message) {
+                elements.progressContainer.style.display = 'none';
+                updateStatistics();
+                updateStatusBar();
+                showTempMessage(message);
+                // 清空file input的值，以便用户可以重复选择同一个文件
+                elements.fileInput.value = '';
+            }
+
             function handleFileSelect(event) {
                 const file = event.target.files[0];
                 if (!file) return;
 
+                // 更新UI，显示加载状态
                 state.currentFile = file.name;
                 state.currentFileSize = file.size;
                 elements.progressContainer.style.display = 'block';
@@ -604,12 +621,13 @@
                 elements.progressFill.style.width = '0%';
                 
                 const reader = new FileReader();
-                reader.onload = e => {
-                    elements.textArea.value = e.target.result;
+                const fileName = file.name.toLowerCase();
+
+                // 通用的错误和进度处理
+                reader.onerror = () => {
                     elements.progressContainer.style.display = 'none';
-                    updateStatistics();
-                    updateStatusBar();
-                    showTempMessage(`文件加载成功: ${file.name}`);
+                    showTempMessage("文件读取失败，请重试！");
+                    elements.fileInput.value = '';
                 };
                 reader.onprogress = e => {
                     if (e.lengthComputable) {
@@ -618,12 +636,46 @@
                         elements.progressLabel.textContent = `正在加载文件: ${progress}%`;
                     }
                 };
-                reader.onerror = () => {
+
+                // 根据文件类型选择不同的处理方式
+                if (fileName.endsWith('.docx')) {
+                    // 健壮性检查：确保 mammoth 库已加载
+                    if (typeof mammoth === 'undefined') {
+                        showTempMessage("Word 解析库加载失败，请刷新页面重试。");
+                        elements.progressContainer.style.display = 'none';
+                        return;
+                    }
+                    
+                    reader.onload = function(e) {
+                        mammoth.extractRawText({ arrayBuffer: e.target.result })
+                            .then(result => {
+                                elements.textArea.value = result.value;
+                                finalizeFileLoad(`Word 文档 (.docx) 加载成功: ${file.name}`);
+                            })
+                            .catch(err => {
+                                console.error("Mammoth.js error: ", err);
+                                elements.progressContainer.style.display = 'none';
+                                showTempMessage("无法解析 .docx 文档。请确保文件未损坏且未加密。");
+                                elements.fileInput.value = '';
+                            });
+                    };
+                    reader.readAsArrayBuffer(file);
+
+                } else if (fileName.endsWith('.txt')) {
+                    reader.onload = e => {
+                        elements.textArea.value = e.target.result;
+                        finalizeFileLoad(`TXT 文件加载成功: ${file.name}`);
+                    };
+                    reader.readAsText(file, 'UTF-8');
+
+                } else {
+                    // 对于通过非常规方式选中的其他文件类型（理论上不会发生）
                     elements.progressContainer.style.display = 'none';
-                    showTempMessage("文件读取失败，请重试！");
-                };
-                reader.readAsText(file, 'UTF-8');
+                    showTempMessage("不支持的文件类型。请选择 .txt 或 .docx 文件。");
+                    elements.fileInput.value = '';
+                }
             }
+            // ★★★ --- END OF FIXED AND REFACTORED CODE --- ★★★
             
             function updateStatusBar() {
                 document.getElementById('filename').textContent = `文件: ${state.currentFile}`;
@@ -691,16 +743,12 @@
                 if (document.getElementById('addParagraphBreaks').checked) text = text.replace(/(\n\s*)+/g, '\n\n');
                 if (document.getElementById('removeBlankLines').checked) text = text.replace(/\n\s*\n/g, '\n').replace(/^\s*\n/, '').replace(/\n\s*$/, '\n').replace(/\n{3,}/g, '\n\n');
                 
-                // ★★★ --- START OF FIXED CODE --- ★★★
                 const indentType = document.querySelector('input[name="indentType"]:checked').value;
                 const indentSize = parseInt(document.getElementById('indentSize').value, 10);
                 const alignValue = document.getElementById('align').value;
 
-                // 1. 应用文本对齐 (直接修改样式)
                 elements.textArea.style.textAlign = alignValue;
 
-                // 2. 应用缩进 (修改文本内容)
-                // 首先移除所有行首的已有空格，以确保缩进不会叠加
                 let lines = text.split('\n').map(line => line.trimStart());
                 
                 if (indentType !== 'none' && indentSize > 0) {
@@ -712,7 +760,7 @@
                         let isFirstLineOfParagraph = true;
                         lines = lines.map(line => {
                             if (line.trim() === '') {
-                                isFirstLineOfParagraph = true; // 空行表示下一行是新段落的开始
+                                isFirstLineOfParagraph = true;
                                 return line;
                             }
                             if (isFirstLineOfParagraph) {
@@ -724,7 +772,6 @@
                     }
                 }
                 text = lines.join('\n');
-                // ★★★ --- END OF FIXED CODE --- ★★★
 
                 elements.textArea.value = text;
                 updateStatistics();
@@ -764,7 +811,7 @@
                         state.currentFindIndex = regex.lastIndex;
                     } else {
                         state.currentFindIndex = 0;
-                        match = regex.exec(text); // Try again from the start
+                        match = regex.exec(text);
                         if(match) {
                             selectText(match.index, match.index + match[0].length);
                             state.currentFindIndex = regex.lastIndex;
@@ -842,7 +889,8 @@
             initEventListeners();
             elements.textArea.value = `欢迎使用文本处理工具！
 
-
+您可以点击左上角的【打开文件】按钮，选择 TXT 或 Word(.docx) 文件进行加载。
+(注意：不支持旧版 .doc 格式)
 
 dfhghfghfg
 
