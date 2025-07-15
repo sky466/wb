@@ -2,7 +2,8 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <title>正在加载...</title>
+    <meta http-equiv="refresh" content="6;url=围猫猫.html">
+    <title>正在加载应用...</title>
     <style>
         body {
             display: flex;
@@ -10,21 +11,25 @@
             align-items: center;
             height: 100vh;
             margin: 0;
-            font-family: 'Microsoft YaHei', sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
             background-color: #f0f2f5;
-            color: #333;
+            color: #444;
+            transition: background-color 0.5s;
         }
         .loader {
             text-align: center;
         }
         .spinner {
-            border: 8px solid #f3f3f3;
-            border-top: 8px solid #3498db;
+            border: 6px solid #e3e3e3;
+            border-top: 6px solid #3498db;
             border-radius: 50%;
-            width: 60px;
-            height: 60px;
+            width: 50px;
+            height: 50px;
             animation: spin 1.5s linear infinite;
             margin: 0 auto 20px;
+        }
+        p {
+            font-size: 1.1em;
         }
         @keyframes spin {
             0% { transform: rotate(0deg); }
@@ -36,46 +41,49 @@
 
     <div class="loader">
         <div class="spinner"></div>
-        <p>正在努力加载文本工具...</p>
-        <p>如果长时间无响应，将为您打开休闲小游戏。</p>
+        <p>正在启动文本工具...</p>
     </div>
 
     <script>
-        // --- 配置 ---
-        const mainAppUrl = 'index.html'; // 主应用HTML文件名
-        const fallbackGameUrl = '围猫猫.html'; // 备用游戏HTML文件名
-        const timeoutDuration = 5000; // 5秒超时时间
+        (function() {
+            // --- 配置 ---
+            const mainAppUrl = 'app.html';       // 您的主应用页面
+            const fallbackGameUrl = '围猫猫.html'; // 您的备用游戏页面
+            const timeoutDuration = 4000;      // 设置4秒超时
 
-        // --- 逻辑 ---
-        let fallbackTimeout;
+            // 创建一个AbortController来控制超时
+            const controller = new AbortController();
+            const signal = controller.signal;
 
-        // 设置一个超时计时器，如果主应用在指定时间内未能成功加载，则跳转到备用游戏
-        fallbackTimeout = setTimeout(redirectToFallback, timeoutDuration);
+            // 设置超时，如果在指定时间内fetch没有完成，就中止它
+            const timeoutId = setTimeout(() => {
+                controller.abort();
+            }, timeoutDuration);
 
-        // 创建一个iframe来尝试加载主应用
-        const iframe = document.createElement('iframe');
-        iframe.src = mainAppUrl;
-        iframe.style.display = 'none'; // 初始时隐藏
-
-        // 当iframe成功加载时，替换当前页面内容
-        iframe.onload = () => {
-            clearTimeout(fallbackTimeout); // 取消备用跳转
-            // 直接跳转到主应用页面，体验更流畅
-            window.location.replace(mainAppUrl);
-        };
-
-        // 如果iframe加载出错（例如404或网络中断）
-        iframe.onerror = () => {
-            clearTimeout(fallbackTimeout); // 取消计时器
-            redirectToFallback();
-        };
-
-        document.body.appendChild(iframe);
-
-        // 跳转到备用游戏的函数
-        function redirectToFallback() {
-            window.location.href = fallbackGameUrl;
-        }
+            // 使用fetch探测主应用
+            fetch(mainAppUrl, { method: 'HEAD', signal: signal }) // 使用HEAD请求，更快速，只获取响应头
+                .then(response => {
+                    // 清除超时计时器，因为我们已经收到了响应
+                    clearTimeout(timeoutId);
+                    
+                    // 检查响应是否成功 (状态码 200-299)
+                    if (response.ok) {
+                        // 成功，立即跳转到主应用
+                        window.location.replace(mainAppUrl);
+                    } else {
+                        // 文件存在但服务器返回错误（如404, 500），跳转到备用游戏
+                        throw new Error('Server response not OK');
+                    }
+                })
+                .catch(error => {
+                    // 清除可能仍在运行的计时器
+                    clearTimeout(timeoutId);
+                    
+                    // 无论是网络错误、超时中止还是服务器错误，都跳转到备用游戏
+                    console.error("无法加载主应用，正在跳转到备用页面。错误:", error.message);
+                    window.location.replace(fallbackGameUrl);
+                });
+        })();
     </script>
 
 </body>
