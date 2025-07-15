@@ -120,7 +120,7 @@
         
         .text-area {
             flex: 1;
-            border: 1px solid #ddd;
+            border: 2px solid #ddd; /* Increased border width for visibility */
             border-radius: 8px;
             padding: 15px;
             font-size: 16px;
@@ -133,6 +133,14 @@
             z-index: 10;
             background: white;
             color: #333;
+            transition: border-color 0.3s, box-shadow 0.3s, background-color 0.3s;
+        }
+        
+        /* ★★★ 新增：拖放悬停时的样式 ★★★ */
+        .text-area.drag-over {
+            border-color: var(--primary) !important;
+            box-shadow: 0 0 10px rgba(52, 152, 219, 0.5) !important;
+            background-color: #f0f8ff;
         }
         
         .text-area:focus {
@@ -359,13 +367,12 @@
                         <div class="stats-item"><i class="fas fa-keyboard"></i> 字母: <span id="letters">0</span></div>
                         <div class="stats-item"><i class="fas fa-paragraph"></i> 段落: <span id="paragraphs">0</span></div>
                     </div>
-                    <textarea class="text-area" id="textArea" placeholder="在此输入或粘贴文本内容..."></textarea>
+                    <textarea class="text-area" id="textArea" placeholder="在此输入或粘贴文本，或将文件拖拽到这里..."></textarea>
                 </div>
                 
                 <div class="controls">
                     <!-- 顶部按钮行 -->
                     <div class="top-buttons">
-                        <!-- ★★★ 修改：按钮文本，更清晰地指示支持的格式 ★★★ -->
                         <button class="btn btn-primary" id="openFileBtn">
                             <i class="fas fa-folder-open"></i>打开 TXT / DOCX
                         </button>
@@ -515,7 +522,6 @@
     
     <div class="temp-message" id="tempMessage"></div>
     
-    <!-- ★★★ 修改：文件类型选择器，不再接受 .doc 文件 ★★★ -->
     <input type="file" id="fileInput" style="display: none;" accept=".txt,.docx,application/vnd.openxmlformats-officedocument.wordprocessingml.document">
     
     <script>
@@ -559,7 +565,9 @@
             
             const state = { currentFile: "无", currentFileSize: 0, currentFindIndex: 0 };
             
+            // ★★★ --- START OF MODIFIED CODE (Event Listeners) --- ★★★
             function initEventListeners() {
+                // ... (existing listeners)
                 elements.textArea.addEventListener('input', updateStatistics);
                 elements.openFileBtn.addEventListener('click', () => elements.fileInput.click());
                 elements.fileInput.addEventListener('change', handleFileSelect);
@@ -573,7 +581,38 @@
                 elements.replaceAllBtn.addEventListener('click', replaceAll);
                 elements.cancelBtn.addEventListener('click', cancelLoading);
                 elements.presetPatternSelect.addEventListener('change', handlePresetPatternChange);
+
+                // Add Drag and Drop Listeners
+                const textArea = elements.textArea;
+                ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                    textArea.addEventListener(eventName, preventDefaults, false);
+                });
+
+                ['dragenter', 'dragover'].forEach(eventName => {
+                    textArea.addEventListener(eventName, () => textArea.classList.add('drag-over'), false);
+                });
+
+                ['dragleave', 'drop'].forEach(eventName => {
+                    textArea.addEventListener(eventName, () => textArea.classList.remove('drag-over'), false);
+                });
+
+                textArea.addEventListener('drop', handleDrop, false);
             }
+
+            function preventDefaults(e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+
+            function handleDrop(e) {
+                const dt = e.dataTransfer;
+                const files = dt.files;
+                
+                if (files.length > 0) {
+                    processFile(files[0]); // Process the first dropped file
+                }
+            }
+            // ★★★ --- END OF MODIFIED CODE (Event Listeners) --- ★★★
             
             function showTempMessage(message, duration = 3000) {
                 elements.tempMessage.textContent = message;
@@ -598,22 +637,17 @@
                 document.getElementById('paragraphs').textContent = text.split('\n').filter(line => line.trim() !== '').length;
             }
 
-            // ★★★ --- START OF FIXED AND REFACTORED CODE --- ★★★
-            // 提取出的通用函数，用于完成文件加载后的收尾工作
-            function finalizeFileLoad(message) {
-                elements.progressContainer.style.display = 'none';
-                updateStatistics();
-                updateStatusBar();
-                showTempMessage(message);
-                // 清空file input的值，以便用户可以重复选择同一个文件
-                elements.fileInput.value = '';
-            }
-
+            // Handler for file input click
             function handleFileSelect(event) {
                 const file = event.target.files[0];
-                if (!file) return;
+                if (file) {
+                    processFile(file);
+                }
+            }
 
-                // 更新UI，显示加载状态
+            // ★★★ --- REFACTORED: Central function to process any file --- ★★★
+            function processFile(file) {
+                // Update UI, show loading state
                 state.currentFile = file.name;
                 state.currentFileSize = file.size;
                 elements.progressContainer.style.display = 'block';
@@ -623,7 +657,7 @@
                 const reader = new FileReader();
                 const fileName = file.name.toLowerCase();
 
-                // 通用的错误和进度处理
+                // Common error and progress handlers
                 reader.onerror = () => {
                     elements.progressContainer.style.display = 'none';
                     showTempMessage("文件读取失败，请重试！");
@@ -636,16 +670,23 @@
                         elements.progressLabel.textContent = `正在加载文件: ${progress}%`;
                     }
                 };
+                
+                // Finalize loading process
+                const finalizeFileLoad = (message) => {
+                    elements.progressContainer.style.display = 'none';
+                    updateStatistics();
+                    updateStatusBar();
+                    showTempMessage(message);
+                    elements.fileInput.value = ''; // Allow re-selecting the same file
+                };
 
-                // 根据文件类型选择不同的处理方式
+                // Process based on file type
                 if (fileName.endsWith('.docx')) {
-                    // 健壮性检查：确保 mammoth 库已加载
                     if (typeof mammoth === 'undefined') {
                         showTempMessage("Word 解析库加载失败，请刷新页面重试。");
                         elements.progressContainer.style.display = 'none';
                         return;
                     }
-                    
                     reader.onload = function(e) {
                         mammoth.extractRawText({ arrayBuffer: e.target.result })
                             .then(result => {
@@ -669,13 +710,11 @@
                     reader.readAsText(file, 'UTF-8');
 
                 } else {
-                    // 对于通过非常规方式选中的其他文件类型（理论上不会发生）
                     elements.progressContainer.style.display = 'none';
                     showTempMessage("不支持的文件类型。请选择 .txt 或 .docx 文件。");
                     elements.fileInput.value = '';
                 }
             }
-            // ★★★ --- END OF FIXED AND REFACTORED CODE --- ★★★
             
             function updateStatusBar() {
                 document.getElementById('filename').textContent = `文件: ${state.currentFile}`;
@@ -889,7 +928,7 @@
             initEventListeners();
             elements.textArea.value = `欢迎使用文本处理工具！
 
-您可以点击左上角的【打开文件】按钮，选择 TXT 或 Word(.docx) 文件进行加载。
+您可以点击左上角的【打开文件】按钮，或直接将 TXT / DOCX 文件拖拽到这个文本框中。
 (注意：不支持旧版 .doc 格式)
 
 dfhghfghfg
