@@ -525,7 +525,7 @@
                 openFileBtn: document.getElementById('openFileBtn'),
                 clearBtn: document.getElementById('clearBtn'),
                 searchToggleBtn: document.getElementById('searchToggleBtn'),
-                processBtn: document.getElementById'processBtn'),
+                processBtn: document.getElementById('processBtn'),
                 searchPanel: document.getElementById('searchPanel'),
                 closeSearchBtn: document.getElementById('closeSearchBtn'),
                 findBtn: document.getElementById('findBtn'),
@@ -691,6 +691,41 @@
                 if (document.getElementById('addParagraphBreaks').checked) text = text.replace(/(\n\s*)+/g, '\n\n');
                 if (document.getElementById('removeBlankLines').checked) text = text.replace(/\n\s*\n/g, '\n').replace(/^\s*\n/, '').replace(/\n\s*$/, '\n').replace(/\n{3,}/g, '\n\n');
                 
+                // ★★★ --- START OF FIXED CODE --- ★★★
+                const indentType = document.querySelector('input[name="indentType"]:checked').value;
+                const indentSize = parseInt(document.getElementById('indentSize').value, 10);
+                const alignValue = document.getElementById('align').value;
+
+                // 1. 应用文本对齐 (直接修改样式)
+                elements.textArea.style.textAlign = alignValue;
+
+                // 2. 应用缩进 (修改文本内容)
+                // 首先移除所有行首的已有空格，以确保缩进不会叠加
+                let lines = text.split('\n').map(line => line.trimStart());
+                
+                if (indentType !== 'none' && indentSize > 0) {
+                    const indentString = ' '.repeat(indentSize);
+                    
+                    if (indentType === 'paragraph') { // "行缩进": 为每个非空行添加缩进
+                        lines = lines.map(line => line ? indentString + line : line);
+                    } else if (indentType === 'line') { // "段落缩进": 只为段落首行添加缩进
+                        let isFirstLineOfParagraph = true;
+                        lines = lines.map(line => {
+                            if (line.trim() === '') {
+                                isFirstLineOfParagraph = true; // 空行表示下一行是新段落的开始
+                                return line;
+                            }
+                            if (isFirstLineOfParagraph) {
+                                isFirstLineOfParagraph = false;
+                                return indentString + line;
+                            }
+                            return line;
+                        });
+                    }
+                }
+                text = lines.join('\n');
+                // ★★★ --- END OF FIXED CODE --- ★★★
+
                 elements.textArea.value = text;
                 updateStatistics();
                 
